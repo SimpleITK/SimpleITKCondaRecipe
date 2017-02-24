@@ -2,11 +2,14 @@
 
 This repository contains the [Conda build recipe](https://conda.io/docs/building/recipe.html) for SimpleITK.
 
-
 ## Shortcut
 
 Binaries of the current SimpleITK release for Anaconda on various operating systems and Python versions can be found on
-[Anaconda Cloud](https://anaconda.org/simpleitk/simpleitk).
+Anaconda cloud's [SimpleITK channel](https://anaconda.org/simpleitk/simpleitk).
+
+```
+conda install -c simpleitk simpleitk=0.10.0
+```
 
 
 ## I really do need to build
@@ -45,3 +48,24 @@ In the package section change the version tag:
 ```
 version: "your_custom_version"
 ```
+### Installation
+
+To install the package and all its dependencies we need to point conda to a channel, this can be a channel on [Anaconda Cloud](https://anaconda.org) or a local [custom channel](https://conda.io/docs/custom-channels.html).
+
+In general, the directory where the package was created serves as a custom channel and you install it as follows:
+```
+conda install -c file://your_anaconda_directory/conda-bld simpleitk
+```
+If you have multiple versions of the package you can specify the version of simpleitk as shown at the top of this page.
+
+You can also create your own custom channel, add the package to the relevant subdirectory based on your platform, and update the index. For example on OSX:
+```
+mkdir -p my-local-conda-channel/osx-64
+cp simpleitk-*.tar.bz2 my-local-conda-channel/osx-64/
+conda index my-local-conda-channel/osx-64/
+```
+Then install from that custom channel:
+```
+conda install -c file://my-local-conda-channel simpleitk
+```
+
