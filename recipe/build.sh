@@ -40,6 +40,7 @@ cmake \
     -D "PYTHON_EXECUTABLE:FILEPATH=${PYTHON}" \
     -D "PYTHON_INCLUDE_DIR:PATH=$PREFIX/include/python${MY_PY_VER}" \
     -D "PYTHON_LIBRARY:FILEPATH=$PREFIX/lib/libpython${MY_PY_VER}.${SO_EXT}" \
+    -D "SWIG_EXECUTABLE:FILEPATH=${PREFIX}/bin/swig" \
     "${SRC_DIR}/SuperBuild"
 
 make -j ${CORES}
