@@ -16,9 +16,19 @@ conda install -c simpleitk simpleitk=0.10.0
 
 ### Prerequisite software
 
-1. [Cmake](https://cmake.org/) build tool.
-2. [Git](https://git-scm.com/) version control system.
-3. Compiler (e.g. gcc4.8).
+1. [Anaconda](https://www.continuum.io/) Python distribution with conda-build installed:
+   ```
+   conda install conda-build
+   ```
+   The [Conda documentation](https://conda.io/docs/building/recipe.html) also recommends updating the installation if you have an older install:
+
+   ```
+   conda update conda
+   conda update conda-build
+   ```
+2. [Cmake](https://cmake.org/) build tool.
+3. [Git](https://git-scm.com/) version control system.
+4. Compiler (e.g. gcc4.8).
 
 ### Process
 
@@ -68,4 +78,3 @@ Then install from that custom channel:
 ```
 conda install -c file://my-local-conda-channel simpleitk
 ```
-
