@@ -13,20 +13,20 @@ build:
 
 requirements:
   build:
-    - swig
+    - swig     >=3
     - python
-    - cmake    >=2.8.11
+    - cmake    >=3.0*
     - libtiff  4.0.*
     - libpng   >=1.6.21,<1.7
-    - jpeg     8*
-    - zlib     1.*
+    - jpeg     >=8
+    - zlib     >=1.2.*
     - setuptools
   run:
     - python
     - libtiff  4.0.*
     - libpng   >=1.6.21,<1.7
-    - jpeg     8*
-    - zlib     1.*
+    - jpeg     >=8*
+    - zlib     >=1.2.*
 
 test:
   imports:
