@@ -64,10 +64,17 @@ To install the package and all its dependencies we need to point conda to a chan
 
 In general, the directory where the package was created serves as a custom channel and you install it as follows:
 ```
-conda install -c file://your_anaconda_directory/conda-bld simpleitk
+conda install --use-local simpleitk
 ```
+
 If you have multiple versions of the package you can specify the version of simpleitk as shown at the top of this page.
 
+### Advanced - managing multiple local versions
+
+Using the --use-local option is equivalent to
+```
+conda install -c file://your_anaconda_directory/conda-bld simpleitk
+```
 You can also create your own custom channel, add the package to the relevant subdirectory based on your platform, and update the index. For example on OSX:
 ```
 mkdir -p my-local-conda-channel/osx-64
@@ -78,3 +85,5 @@ Then install from that custom channel:
 ```
 conda install -c file://my-local-conda-channel simpleitk
 ```
+
+If the package is not found in the local channel conda will attempt to retrieve it from other channels. For example if you have the simpleitk channel listed in your .condarc file you may get a simpleitk package, not necessarily the one you wanted, your local version which wasn't found.
