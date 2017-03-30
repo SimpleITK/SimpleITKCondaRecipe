@@ -5,7 +5,7 @@ package:
   version: "{{version}}"
 
 source:
-  git_url: http://itk.org/SimpleITK.git
+  git_url: git://itk.org/SimpleITK.git
   git_tag:  v{{version}}
 
 build:
