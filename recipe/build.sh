@@ -7,6 +7,12 @@ else
     SO_EXT='so'
 fi
 
+# When building 32-bits on 64-bit system this flags is not automatically set by conda-build
+if [ $ARCH == 32 -a "${OSX_ARC:-notosx}" == "notosx" ]; then
+    export CFLAGS="${CFLAGS} -m32"
+    export CXXFLAGS="${CXXFLAGS} -m32"
+fi
+
 BUILD_DIR=${SRC_DIR}/build
 mkdir ${BUILD_DIR}
 cd ${BUILD_DIR}
