@@ -22,7 +22,7 @@ cmake \
     -D "CMAKE_CXX_FLAGS:STRING=-fvisibility=hidden -fvisibility-inlines-hidden ${CFLAGS}" \
     -D "CMAKE_C_FLAGS:STRING=-fvisibility=hidden ${CXXFLAGS}" \
     ${CMAKE_ARGS} \
-    -D SimpleITK_GIT_PROTOCOL_default:STRING=git \
+    -D SimpleITK_GIT_PROTOCOL:STRING=git \
     -D SimpleITK_BUILD_DISTRIBUTE:BOOL=ON \
     -D SimpleITK_BUILD_STRIP:BOOL=ON \
     -D CMAKE_BUILD_TYPE:STRING=RELEASE \
