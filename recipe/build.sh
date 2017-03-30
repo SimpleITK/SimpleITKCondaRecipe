@@ -19,8 +19,8 @@ if [ $PY3K -eq "1" ]; then
 fi
 
 cmake \
-    -D "CMAKE_CXX_FLAGS:STRING=-fvisibility=hidden -fvisibility-inlines-hidden ${CFLAGS}" \
-    -D "CMAKE_C_FLAGS:STRING=-fvisibility=hidden ${CXXFLAGS}" \
+    -D "CMAKE_CXX_FLAGS:STRING=-fvisibility=hidden -fvisibility-inlines-hidden ${CXXFLAGS}" \
+    -D "CMAKE_C_FLAGS:STRING=-fvisibility=hidden ${CFLAGS}" \
     ${CMAKE_ARGS} \
     -D SimpleITK_GIT_PROTOCOL:STRING=git \
     -D SimpleITK_BUILD_DISTRIBUTE:BOOL=ON \
