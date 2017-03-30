@@ -1,7 +1,5 @@
 #!/bin/bash
 
-CORES=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || sysctl -n hw.ncpu || 1)
-
 if [ `uname` == Darwin ]; then
     SO_EXT='dylib'
     CMAKE_ARGS="-D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOSX_DEPLOYMENT_TARGET}"
@@ -43,7 +41,7 @@ cmake \
     -D "SWIG_EXECUTABLE:FILEPATH=${PREFIX}/bin/swig" \
     "${SRC_DIR}/SuperBuild"
 
-make -j ${CORES}
+make -j ${CPU_COUNT}
 cd ${BUILD_DIR}/SimpleITK-build/Wrapping/Python
 ${PYTHON} Packaging/setup.py install
 
