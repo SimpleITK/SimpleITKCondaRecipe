@@ -1,5 +1,7 @@
-mkdir C:\b
-cd C:\b
+set BUILD_DIR=C:\b\%PY_VER%-%ARCH%
+IF EXIST %BUILD_DIR% ( echo "Please remove %BUILD_DIR%"; exit 1 )
+mkdir %BUILD_DIR%
+cd %BUILD_DIR%
 
 REM Remove dot from PY_VER for use in library name
 set MY_PY_VER=%PY_VER:.=%
@@ -42,3 +44,5 @@ if errorlevel 1 exit 1
 
 cd SimpleITK-build\Wrapping\Python
 %PYTHON% Packaging\setup.py install
+
+IF "%DIRTY%" NEQ "1" (rmdir /s /q %BUILD_DIR%)
