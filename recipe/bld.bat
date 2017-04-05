@@ -6,6 +6,8 @@ cd %BUILD_DIR%
 REM Remove dot from PY_VER for use in library name
 set MY_PY_VER=%PY_VER:.=%
 
+set CXXFLAGS=/MP
+
 REM Configure Step
 cmake -G "%CMAKE_GENERATOR%" ^
     -D SimpleITK_BUILD_DISTRIBUTE:BOOL=ON ^
