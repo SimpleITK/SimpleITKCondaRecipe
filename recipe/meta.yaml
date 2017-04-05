@@ -13,8 +13,8 @@ build:
 
 requirements:
   build:
-    - swig    >=3
-    - python
+    - swig     >=3
+    - python   >=2.7
     - cmake    >=3.3
     - libtiff  4.0.*
     - libpng   >=1.6.27,<1.7
