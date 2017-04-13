@@ -1,7 +1,7 @@
-!/usr/bin/bash
+#!/usr/bin/bash
 set -x
 
-if [ ${ARCH} -eq "32" -o  ${ARCH} -eq "x86" ]; then
+if [ "${ARCH}" = "32" -o  "${ARCH}" = "x86" ]; then
     CONDA_ROOT=${CONDA_ROOT:-/opt/miniconda2-32}
 else
     CONDA_ROOT=${CONDA_ROOT:-/opt/miniconda2}
