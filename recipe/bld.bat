@@ -25,7 +25,7 @@ cmake -G "%CMAKE_GENERATOR%" ^
     -D "PYTHON_EXECUTABLE:FILEPATH=%PYTHON%" ^
     -D "PYTHON_INCLUDE_DIR:PATH=%PREFIX%/include" ^
     -D "PYTHON_LIBRARY:FILEPATH=%PREFIX%/libs/python%MY_PY_VER%.lib" ^
-    -D "SWIG_EXECUTABLE:FILEPATH=%PREFIX%/bin/swig" ^
+    -D "SWIG_EXECUTABLE:FILEPATH=%PREFIX%/Library/bin/swig" ^
     "%SRC_DIR%/SuperBuild"
 
 if errorlevel 1 exit 1
