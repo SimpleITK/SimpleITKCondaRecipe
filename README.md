@@ -2,7 +2,11 @@
 
 This repository contains the [Conda build recipe](https://conda.io/docs/building/recipe.html) for SimpleITK.
 
-## Shortcut
+## Anaconda Cloud Compiled Binaries
+
+[![Anaconda-Server Badge](https://anaconda.org/simpleitk/simpleitk/badges/installer/conda.svg)](https://anaconda.org/simpleitk/simpleitk)
+[![Anaconda-Server Badge](https://anaconda.org/simpleitk/simpleitk/badges/version.svg)](https://anaconda.org/simpleitk/simpleitk)
+[![Anaconda-Server Badge](https://anaconda.org/simpleitk/simpleitk/badges/downloads.svg)](https://anaconda.org/simpleitk/simpleitk)
 
 Binaries of the current SimpleITK release for Anaconda on various operating systems and Python versions can be found on
 Anaconda cloud's [SimpleITK channel](https://anaconda.org/simpleitk/simpleitk).
