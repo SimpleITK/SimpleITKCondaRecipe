@@ -4,7 +4,7 @@ This repository contains the [Conda build recipe](https://conda.io/docs/building
 
 ## Anaconda Cloud Compiled Binaries
 
-[![Anaconda-Server Badge](https://anaconda.org/simpleitk/simpleitk/badges/installer/conda.svg)](https://conda.anaconda.org/simpleitk/simpleitk)
+[![Anaconda-Server Badge](https://anaconda.org/simpleitk/simpleitk/badges/installer/conda.svg)](https://anaconda.org/simpleitk/simpleitk)
 [![Anaconda-Server Badge](https://anaconda.org/simpleitk/simpleitk/badges/version.svg)](https://anaconda.org/simpleitk/simpleitk)
 [![Anaconda-Server Badge](https://anaconda.org/simpleitk/simpleitk/badges/downloads.svg)](https://anaconda.org/simpleitk/simpleitk)
 
