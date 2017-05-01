@@ -12,7 +12,7 @@ Binaries of the current SimpleITK release for Anaconda on various operating syst
 Anaconda cloud's [SimpleITK channel](https://anaconda.org/simpleitk/simpleitk).
 
 ```
-conda install -c simpleitk simpleitk=0.10.0
+conda install -c simpleitk simpleitk
 ```
 
 
