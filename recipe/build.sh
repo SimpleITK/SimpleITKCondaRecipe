@@ -1,10 +1,7 @@
 #!/bin/bash
 
 if [ `uname` == Darwin ]; then
-    SO_EXT='dylib'
     CMAKE_ARGS="-D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOSX_DEPLOYMENT_TARGET}"
-else
-    SO_EXT='so'
 fi
 
 # When building 32-bits on 64-bit system this flags is not automatically set by conda-build
@@ -17,10 +14,10 @@ BUILD_DIR=${SRC_DIR}/build
 mkdir ${BUILD_DIR}
 cd ${BUILD_DIR}
 
-MY_PY_VER=${PY_VER}
-if [ $PY3K -eq "1" ]; then
-    MY_PY_VER="${MY_PY_VER}m"
-fi
+
+PYTHON_INCLUDE_DIR=$(${PYTHON} -c 'import sysconfig;print("{0}".format(sysconfig.get_path("platinclude")))')
+PYTHON_LIBRARY_DIR=$(${PYTHON} -c 'import sysconfig;print("{0}/{1}".format(*map(sysconfig.get_config_var, ("LIBDIR", "LDLIBRARY"))))')
+
 
 cmake \
     -D "CMAKE_CXX_FLAGS:STRING=-fvisibility=hidden -fvisibility-inlines-hidden ${CXXFLAGS}" \
@@ -42,8 +39,8 @@ cmake \
     -D ITK_USE_SYSTEM_ZLIB:BOOL=ON \
     -D "CMAKE_SYSTEM_PREFIX_PATH:FILEPATH=${PREFIX}" \
     -D "PYTHON_EXECUTABLE:FILEPATH=${PYTHON}" \
-    -D "PYTHON_INCLUDE_DIR:PATH=$PREFIX/include/python${MY_PY_VER}" \
-    -D "PYTHON_LIBRARY:FILEPATH=$PREFIX/lib/libpython${MY_PY_VER}.${SO_EXT}" \
+    -D "PYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}" \
+    -D "PYTHON_LIBRARY_DIR:PATH=${PYTHON_LIBRARY_DIR}" \
     -D "SWIG_EXECUTABLE:FILEPATH=${PREFIX}/bin/swig" \
     "${SRC_DIR}/SuperBuild"
 
