@@ -30,9 +30,8 @@ conda install -c simpleitk simpleitk
    conda update conda
    conda update conda-build
    ```
-2. [Cmake](https://cmake.org/) build tool.
-3. [Git](https://git-scm.com/) version control system.
-4. Compiler (e.g. gcc4.8).
+2. [Git](https://git-scm.com/) version control system.
+3. Compiler (e.g. gcc4.8).
 
 ### Process
 
