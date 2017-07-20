@@ -47,7 +47,7 @@ You can also build for a version of Python which is not the currently active one
 ```
 git clone https://github.com/SimpleITK/SimpleITKCondaRecipe.git
 cd SimpleITKCondaRecipe
-CONDA_PY=34 conda build recipe
+conda build --python 3.4 recipe
 ```
 
 Both builds above will use the currently released SimpleITK version which is specified in the [meta.yaml](recipe/meta.yaml) file. If you want another version, such as SimpleITK's current master branch, you will need to make the following two edits to the yaml file.
