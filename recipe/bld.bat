@@ -22,12 +22,12 @@ cmake -G "%CMAKE_GENERATOR%" ^
     -D ITK_USE_SYSTEM_PNG:BOOL=ON ^
     -D ITK_USE_SYSTEM_TIFF:BOOL=ON ^
     -D ITK_USE_SYSTEM_ZLIB:BOOL=ON ^
-    -D "CMAKE_SYSTEM_PREFIX_PATH:PATH=%PREFIX%/Library" ^
+    -D "CMAKE_SYSTEM_PREFIX_PATH:PATH=%PREFIX%\Library" ^
     -D "PYTHON_EXECUTABLE:FILEPATH=%PYTHON%" ^
-    -D "PYTHON_INCLUDE_DIR:PATH=%PREFIX%/include" ^
-    -D "PYTHON_LIBRARY:FILEPATH=%PREFIX%/libs/python%MY_PY_VER%.lib" ^
-    -D "SWIG_EXECUTABLE:FILEPATH=%PREFIX%/Library/bin/swig" ^
-    "%SRC_DIR%/SuperBuild"
+    -D "PYTHON_INCLUDE_DIR:PATH=%PREFIX%\include" ^
+    -D "PYTHON_LIBRARY:FILEPATH=%PREFIX%\libs\python%MY_PY_VER%.lib" ^
+    -D "SWIG_EXECUTABLE:FILEPATH=%PREFIX%\Library\bin\swig" ^
+    "%SRC_DIR%\SuperBuild"
 
 if errorlevel 1 exit 1
 
