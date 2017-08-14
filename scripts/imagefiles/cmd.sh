@@ -14,7 +14,7 @@ cd /tmp
 git clone https://github.com/SimpleITK/SimpleITKCondaRecipe.git
 CONDA_RECIPES=$(pwd)/SimpleITKCondaRecipe
 
-(${CONDA} update -y -n root conda conda-build )|| (echo "conda-build needs to be installed into conda!";exit 1)
+(${CONDA} update -y -n root conda conda-build )|| (echo "conda-build needs to be installed into conda\!";exit 1)
 
 cd ${CONDA_RECIPES}
 
