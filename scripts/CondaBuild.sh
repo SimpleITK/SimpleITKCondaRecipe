@@ -19,7 +19,7 @@ ${CONDA} update -n root conda conda-build -y
 cd ${CONDA_RECIPES}
 
 for PYV in ${PYTHON_VERSIONS}; do
-    CONDA_PY=${PYV}  ${CONDA} build recipe #simpleitk 
+    ${CONDA} build --python ${PYV} --output-folder channel recipe #simpleitk
 done
 
 
