@@ -3,6 +3,7 @@ set -x
 
 if [ "${ARCH}" = "32" -o  "${ARCH}" = "x86" ]; then
     CONDA_ROOT=${CONDA_ROOT:-/opt/miniconda2-32}
+    LINUX32=/usr/bin/linux32
 else
     CONDA_ROOT=${CONDA_ROOT:-/opt/miniconda2}
 fi
@@ -21,7 +22,7 @@ cd ${CONDA_RECIPES}
 echo "PYTHON_VERSIONS: ${PYTHON_VERSIONS}"
 for PYV in ${PYTHON_VERSIONS}; do
     echo
-    ${CONDA} build --python ${PYV} --output-folder ${OUTPUT_DIR} recipe #simpleitk 
+    ${LINUX32} ${CONDA} build --python ${PYV} --output-folder ${OUTPUT_DIR} recipe #simpleitk
 done
 
 
