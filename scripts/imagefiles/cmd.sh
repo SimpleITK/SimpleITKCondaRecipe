@@ -11,6 +11,9 @@ CONDA=${CONDA_ROOT}/bin/conda
 PYTHON_VERSIONS=${PYTHON_VERSIONS:-"36 35 34 27"}
 OUTPUT_DIR=${OUTPUT_DIR:-/work/io/channel}
 
+. ${CONDA_ROOT}/etc/profile.d/conda.sh
+conda activate
+
 cd /tmp
 git clone https://github.com/SimpleITK/SimpleITKCondaRecipe.git
 CONDA_RECIPES=$(pwd)/SimpleITKCondaRecipe
