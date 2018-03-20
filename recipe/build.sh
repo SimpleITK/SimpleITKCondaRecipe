@@ -22,6 +22,10 @@ PYTHON_LIBRARY_DIR=$(${PYTHON} -c 'import sysconfig;print("{0}/{1}".format(*map(
 cmake \
     -D "CMAKE_CXX_FLAGS:STRING=-fvisibility=hidden -fvisibility-inlines-hidden ${CXXFLAGS}" \
     -D "CMAKE_C_FLAGS:STRING=-fvisibility=hidden ${CFLAGS}" \
+    -D "CMAKE_EXE_LINKER_FLAGS:STRING=${LDFLAGS}" \
+    -D "CMAKE_MODULE_LINKER_FLAGS:STRING=${LDFLAGS}" \
+    -D "CMAKE_SHARED_LINKER_FLAGS:STRING=${LDFLAGS}" \
+    -D "CMAKE_STATIC_LINKER_FLAGS:STRING=${LDFLAGS}" \
     ${CMAKE_ARGS} \
     -D SimpleITK_GIT_PROTOCOL:STRING=git \
     -D SimpleITK_BUILD_DISTRIBUTE:BOOL=ON \
