@@ -15,11 +15,11 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    - cmake    >=3.3
 
   host:
     - python
     - swig     >=3
-    - cmake    >=3.3
     - setuptools
     - libtiff
     - libpng
