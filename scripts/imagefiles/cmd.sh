@@ -8,7 +8,7 @@ else
     CONDA_ROOT=${CONDA_ROOT:-/opt/miniconda2}
 fi
 CONDA=${CONDA_ROOT}/bin/conda
-PYTHON_VERSIONS=${PYTHON_VERSIONS:-"36 35 34 27"}
+PYTHON_VERSIONS=${PYTHON_VERSIONS:-"37 36 35 27"}
 OUTPUT_DIR=${OUTPUT_DIR:-/work/io/channel}
 
 . ${CONDA_ROOT}/etc/profile.d/conda.sh
