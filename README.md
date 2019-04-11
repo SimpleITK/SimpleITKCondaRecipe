@@ -31,7 +31,7 @@ conda install -c simpleitk simpleitk
    conda update conda-build
    ```
 2. [Git](https://git-scm.com/) version control system.
-3. Compiler (e.g. gcc4.8).
+3. Compiler (e.g. gcc4.8).  On Windows Visual C++ 14.0 is the supported version for Python 3.5-7.  It comes with Visual Studio 2015.  More recent versions of Visual Studio will not work by default.  Links to download VS2015 can be found [here](https://stackoverflow.com/questions/44290672/how-to-download-visual-studio-community-edition-2015-not-2017).
 
 ### Process
 
