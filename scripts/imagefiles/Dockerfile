@@ -9,8 +9,8 @@ WORKDIR /tmp/
 ADD https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh \
     https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86.sh \
     /tmp/
-RUN /bin/bash /tmp/Miniconda2-latest-Linux-x86.sh -p /opt/miniconda2-32 -b && /opt/miniconda2-32/bin/conda install -n root git conda-build -y
-RUN /bin/bash /tmp/Miniconda2-latest-Linux-x86_64.sh -p /opt/miniconda2 -b && /opt/miniconda2/bin/conda install -n root git -y && /opt/miniconda2/bin/conda install -n root git conda-build -y
+RUN /bin/bash /tmp/Miniconda2-latest-Linux-x86.sh -p /opt/miniconda2-32 -b && /opt/miniconda2-32/bin/conda install --yes --name root git conda-build
+RUN /bin/bash /tmp/Miniconda2-latest-Linux-x86_64.sh -p /opt/miniconda2 -b && /opt/miniconda2/bin/conda install --yes --name root git conda-build 
 RUN rm -f /tmp/Miniconda*
 
 

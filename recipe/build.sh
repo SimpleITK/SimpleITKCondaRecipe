@@ -1,14 +1,17 @@
 #!/bin/bash
 
-if [ `uname` == Darwin ]; then
-    CMAKE_ARGS="-D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOSX_DEPLOYMENT_TARGET}"
-fi
+#if [ `uname` == Darwin ]; then
+#    CMAKE_ARGS="-D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOSX_DEPLOYMENT_TARGET}"
+#fi
 
 # When building 32-bits on 64-bit system this flags is not automatically set by conda-build
 if [ $ARCH == 32 -a "${OSX_ARCH:-notosx}" == "notosx" ]; then
     export CFLAGS="${CFLAGS} -m32"
     export CXXFLAGS="${CXXFLAGS} -m32"
 fi
+
+unset CXXFLAGS
+unset CFLAGS
 
 BUILD_DIR=${SRC_DIR}/build
 mkdir ${BUILD_DIR}
@@ -20,13 +23,15 @@ PYTHON_LIBRARY_DIR=$(${PYTHON} -c 'import sysconfig;print("{0}/{1}".format(*map(
 
 
 cmake \
+    -G Ninja \
+    ${CMAKE_ARGS} \
     -D "CMAKE_CXX_FLAGS:STRING=-fvisibility=hidden -fvisibility-inlines-hidden ${CXXFLAGS}" \
+    -D "CMAKE_CXX_LINK_FLAGS=${LDFLAGS}" \
     -D "CMAKE_C_FLAGS:STRING=-fvisibility=hidden ${CFLAGS}" \
     -D "CMAKE_EXE_LINKER_FLAGS:STRING=${LDFLAGS}" \
     -D "CMAKE_MODULE_LINKER_FLAGS:STRING=${LDFLAGS}" \
     -D "CMAKE_SHARED_LINKER_FLAGS:STRING=${LDFLAGS}" \
     -D "CMAKE_STATIC_LINKER_FLAGS:STRING=${LDFLAGS}" \
-    ${CMAKE_ARGS} \
     -D SimpleITK_GIT_PROTOCOL:STRING=git \
     -D SimpleITK_BUILD_DISTRIBUTE:BOOL=ON \
     -D SimpleITK_BUILD_STRIP:BOOL=ON \
@@ -49,7 +54,7 @@ cmake \
     -D "SWIG_EXECUTABLE:FILEPATH=${PREFIX}/bin/swig" \
     "${SRC_DIR}/SuperBuild"
 
-make -j ${CPU_COUNT}
+cmake --build  . --config Release
+
 cd ${BUILD_DIR}/SimpleITK-build/Wrapping/Python
 ${PYTHON} Packaging/setup.py install
-
