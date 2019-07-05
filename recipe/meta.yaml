@@ -1,4 +1,4 @@
-{% set version = "1.2.0" %}
+{% set version = "1.2.1b1" %}
 
 package:
   name: simpleitk
@@ -6,7 +6,7 @@ package:
 
 source:
   git_url: git://itk.org/SimpleITK.git
-  git_tag:  v{{version}}
+  git_tag:   9f0ecaa91124238af88470081c78bf5da8ce37d5
 
 build:
     number: 0
@@ -16,6 +16,7 @@ requirements:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake    >=3.11
+    - ninja
 
   host:
     - python
