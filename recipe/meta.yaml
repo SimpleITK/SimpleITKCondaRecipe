@@ -1,4 +1,5 @@
-{% set version = "1.2.1b1" %}
+{% set version = "1.2.1b2" %}
+{% set build_number = 0 %}
 
 package:
   name: simpleitk
@@ -6,10 +7,10 @@ package:
 
 source:
   git_url: git://itk.org/SimpleITK.git
-  git_tag:   9f0ecaa91124238af88470081c78bf5da8ce37d5
+  git_tag: 2454f99dbcf0d6267649ec72112ec045884f744f
 
 build:
-    number: 0
+    number: "{{build_number}}"
 
 requirements:
   build:

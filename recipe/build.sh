@@ -1,17 +1,14 @@
 #!/bin/bash
 
-#if [ `uname` == Darwin ]; then
-#    CMAKE_ARGS="-D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOSX_DEPLOYMENT_TARGET}"
-#fi
+if [ `uname` == Darwin ]; then
+    CMAKE_ARGS="-D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOSX_DEPLOYMENT_TARGET}"
+fi
 
 # When building 32-bits on 64-bit system this flags is not automatically set by conda-build
 if [ $ARCH == 32 -a "${OSX_ARCH:-notosx}" == "notosx" ]; then
     export CFLAGS="${CFLAGS} -m32"
     export CXXFLAGS="${CXXFLAGS} -m32"
 fi
-
-unset CXXFLAGS
-unset CFLAGS
 
 BUILD_DIR=${SRC_DIR}/build
 mkdir ${BUILD_DIR}
