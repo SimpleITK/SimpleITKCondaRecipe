@@ -24,7 +24,7 @@ conda install -c simpleitk simpleitk
    ```
    conda install conda-build
    ```
-   The [Conda documentation](https://conda.io/docs/building/recipe.html) also recommends updating the installation if you have an older install:
+   The [Conda documentation](https://conda.io/projects/conda-build/en/latest/install-conda-build.html) also recommends updating the installation if you have an older install:
 
    ```
    conda update conda
