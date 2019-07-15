@@ -6,6 +6,7 @@ jobs:
     timeoutInMinutes: 0
     cancelTimeoutInMinutes: 300
     strategy:
+      maxParallel: 2
       matrix:
         Python37-x86:
           imageName: 'vs2017-win2016'
@@ -115,6 +116,7 @@ jobs:
     timeoutInMinutes: 0
     cancelTimeoutInMinutes: 300
     strategy:
+      maxParallel: 2
       matrix:
         Python37:
           imageName: 'Ubuntu-16.04'
