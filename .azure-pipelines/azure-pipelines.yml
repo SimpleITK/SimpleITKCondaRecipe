@@ -8,28 +8,9 @@ jobs:
     strategy:
       maxParallel: 2
       matrix:
-        Python37-x86:
+        Python27:
           imageName: 'vs2017-win2016'
-          var.python_version: 37
-          var.arch: x86
-        Python37:
-          imageName: 'vs2017-win2016'
-          var.python_version: 37
-        Python36-x86:
-          imageName: 'vs2017-win2016'
-          var.python_version: 36
-          var.arch: x86
-        Python36:
-          imageName: 'vs2017-win2016'
-          var.python_version: 36
-        Python35-x86:
-          imageName: 'vs2017-win2016'
-          var.python_version: 35
-          var.arch: x86
-        Python35:
-          imageName: 'vs2017-win2016'
-          var.python_version: 35
-
+          var.python_version: 27
     pool:
       vmImage: $(imageName)
 
@@ -66,7 +47,7 @@ jobs:
           Write-Host "##vso[task.prependpath]$install_dir\Scripts"
         displayName: "Installing Miniconda"
       - bash: |
-          choco upgrade -y vcpython27
+          choco upgrade vcpython27 -fdv -y --debug
         condition:  lt(variables['var.python_version'], '33')
         displayName: "Installing Visual Studio for Python 2.7..."
       - powershell: |
@@ -98,8 +79,9 @@ jobs:
           conda activate bld
           cd $(Build.SourcesDirectory)
           conda build --python "$VAR_PYTHON_VERSION" --output-folder channel recipe
-        env:
-          VS90COMNTOOLS: 'C:\\Program Files (x86)\\Common Files\\Microsoft\\Visual C++ for Python\\9.0\\VC\\bin'
+        env: {
+          VS90COMNTOOLS: "C:\\Program Files (x86)\\Common Files\\Microsoft\\Visual C++ for Python\\9.0\\VC\\bin",
+        }
       - task: CopyFiles@2
         inputs:
           sourceFolder: '$(Build.SourcesDirectory)/channel/'
@@ -111,96 +93,4 @@ jobs:
           pathtoPublish: $(Build.ArtifactStagingDirectory)
           artifactName: AnacondaPackage
 
-  - job: Linux
-
-    timeoutInMinutes: 0
-    cancelTimeoutInMinutes: 300
-    strategy:
-      maxParallel: 2
-      matrix:
-        Python37:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 37
-          var.arch: x64
-        Python36:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 36
-          var.arch: x64
-        Python35:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 35
-          var.arch: x64
-        Python27:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 27
-          var.arch: x64
-        Python37-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 37
-          var.arch: x86
-        Python36-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 36
-          var.arch: x86
-        Python35-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 35
-          var.arch: x86
-        Python27-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 27
-          var.arch: x86
-
-
-    pool:
-      vmImage: $(imageName)
-
-    steps:
-      - bash: |
-          set -x
-          if [ -n "$(System.PullRequest.SourceCommitId)" ]; then
-            git checkout $(System.PullRequest.SourceCommitId)
-          fi
-        displayName: Checkout pull request HEAD
-      - bash: |
-
-          if [ $VAR_ARCH == "x86" ]; then
-             curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86.sh
-             /bin/bash Miniconda3-latest-Linux-x86.sh -p /opt/miniconda3-x86 -b
-             echo "##vso[task.prependpath]/opt/miniconda3-x86/bin"
-          else
-             curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-             /bin/bash Miniconda3-latest-Linux-x86_64.sh -p /opt/miniconda3 -b
-             echo "##vso[task.prependpath]/opt/miniconda3/bin"
-          fi
-        displayName: "Installing Miniconda"
-      - bash: |
-          source activate
-          which conda
-          if [ $VAR_ARCH != "x86" ]; then
-            conda update --yes --name base -c defaults conda
-          fi
-          conda create --yes --quiet --name bld
-          conda activate bld
-
-          conda install --yes --name bld conda-build
-        displayName: "Creating updated environment with conda-build..."
-      - bash: |
-          set -x
-          source activate
-          conda activate bld
-          if [ ${VAR_ARCH} == "x86" ]; then
-            LINUX32=$(which linux32)
-            echo "LINUX32: ${LINUX32}"
-          fi
-          ${LINUX32} conda build --python "$VAR_PYTHON_VERSION" --output-folder channel recipe
-      - task: CopyFiles@2
-        inputs:
-          sourceFolder: '$(Build.SourcesDirectory)/channel/'
-          contents: '*/simpleitk*.tar.bz2'
-          targetFolder: $(Build.ArtifactStagingDirectory)
-          flattenFolders: false
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          artifactName: AnacondaPackage
+ 
