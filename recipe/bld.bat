@@ -9,7 +9,7 @@ set MY_PY_VER=%PY_VER:.=%
 set CXXFLAGS=/MP
 
 REM Configure Step
-cmake -G "%CMAKE_GENERATOR%" ^
+cmake -G "Ninja" ^
     -D SimpleITK_BUILD_DISTRIBUTE:BOOL=ON ^
     -D BUILD_SHARED_LIBS:BOOL=OFF ^
     -D BUILD_TESTING:BOOL=OFF ^
