@@ -2,115 +2,6 @@ variables:
   var.conda_version: 4.7.5
   var.conda_build_version: 3.18
 jobs:
-  - job: Windows
-    timeoutInMinutes: 0
-    cancelTimeoutInMinutes: 300
-    strategy:
-      maxParallel: 2
-      matrix:
-        Python37-x86:
-          imageName: 'vs2017-win2016'
-          var.python_version: 37
-          var.arch: x86
-        Python37:
-          imageName: 'vs2017-win2016'
-          var.python_version: 37
-        Python36-x86:
-          imageName: 'vs2017-win2016'
-          var.python_version: 36
-          var.arch: x86
-        Python36:
-          imageName: 'vs2017-win2016'
-          var.python_version: 36
-        Python35-x86:
-          imageName: 'vs2017-win2016'
-          var.python_version: 35
-          var.arch: x86
-        Python35:
-          imageName: 'vs2017-win2016'
-          var.python_version: 35
-
-    pool:
-      vmImage: $(imageName)
-
-    steps:
-      - checkout: self
-        clean: true
-        fetchDepth: 5
-      - bash: |
-          set -x
-          if [ -n "$(System.PullRequest.SourceCommitId)" ]; then
-            git checkout $(System.PullRequest.SourceCommitId)
-          fi
-        displayName: Checkout pull request HEAD
-      - powershell: |
-      - powershell: |
-
-          Set-PSDebug -Trace 1
-
-          $download_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe"
-          if ($env:VAR_ARCH -eq "x86")
-            {
-            $download_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe"
-            }
-
-          Write-Host "`nDownloading Miniconda Installer $download_url ...`n"
-          (New-Object System.Net.WebClient).DownloadFile($download_url, "$pwd\Miniconda_Install.exe")
-
-          Write-Host "Installing Miniconda...`n"
-          $install_dir="C:\miniconda3"
-          Start-Process Miniconda_Install.exe "/S /AddToPath=0 /D=$install_dir" -Wait
-
-          Set-PSDebug -Trace 0
-
-          Write-Host "##vso[task.prependpath]$install_dir\Scripts"
-        displayName: "Installing Miniconda"
-      - bash: |
-          choco upgrade -y vcpython27
-        condition:  lt(variables['var.python_version'], '33')
-        displayName: "Installing Visual Studio for Python 2.7..."
-      - powershell: |
-          Set-PSDebug -Trace 1
-          $batchcontent = @"
-          ECHO ON
-          SET vcpython=C:\Program Files (x86)\Common Files\Microsoft\Visual C++ for Python\9.0
-          DIR "%vcpython%"
-          CALL "%vcpython%\vcvarsall.bat" %*
-          "@
-          $batchDir = "C:\Program Files (x86)\Common Files\Microsoft\Visual C++ for Python\9.0\VC"
-          $batchPath = "$batchDir" + "\vcvarsall.bat"
-          New-Item -Path $batchPath -ItemType "file" -Force
-          Set-Content -Value $batchcontent -Path $batchPath
-          Get-ChildItem -Path $batchDir
-          Get-ChildItem -Path ($batchDir + '\..')
-        condition:  lt(variables['var.python_version'], '33')
-        displayName: Patch vs2008 (if needed)
-      - bash: |
-          source activate
-          conda update -n base -c defaults conda -y
-          conda create --yes --quiet --name bld
-          conda activate bld
-          conda install --yes --name bld conda-build=$VAR_CONDA_BUILD_VERSION
-        displayName: "Updating conda-build..."
-      - bash: |
-          ls "${VS90COMNTOOLS}"
-          source activate
-          conda activate bld
-          cd $(Build.SourcesDirectory)
-          conda build --python "$VAR_PYTHON_VERSION" --output-folder channel recipe
-        env:
-          VS90COMNTOOLS: 'C:\\Program Files (x86)\\Common Files\\Microsoft\\Visual C++ for Python\\9.0\\VC\\bin'
-      - task: CopyFiles@2
-        inputs:
-          sourceFolder: '$(Build.SourcesDirectory)/channel/'
-          contents: '*/simpleitk*.tar.bz2'
-          targetFolder: $(Build.ArtifactStagingDirectory)
-          flattenFolders: false
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: $(Build.ArtifactStagingDirectory)
-          artifactName: AnacondaPackage
-
   - job: Linux
 
     timeoutInMinutes: 0
@@ -120,35 +11,9 @@ jobs:
       matrix:
         Python37:
           imageName: 'Ubuntu-16.04'
-          var.python_version: 37
-          var.arch: x64
-        Python36:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 36
-          var.arch: x64
-        Python35:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 35
-          var.arch: x64
-        Python27:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 27
           var.arch: x64
         Python37-x86:
           imageName: 'Ubuntu-16.04'
-          var.python_version: 37
-          var.arch: x86
-        Python36-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 36
-          var.arch: x86
-        Python35-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 35
-          var.arch: x86
-        Python27-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 27
           var.arch: x86
 
 
@@ -186,6 +51,9 @@ jobs:
           conda install --yes --name bld conda-build
         displayName: "Creating updated environment with conda-build..."
       - bash: |
+          sudo apt-get install -y ccache
+          ccache -M 400M
+      - bash: |
           set -x
           source activate
           conda activate bld
@@ -193,7 +61,11 @@ jobs:
             LINUX32=$(which linux32)
             echo "LINUX32: ${LINUX32}"
           fi
-          ${LINUX32} conda build --python "$VAR_PYTHON_VERSION" --output-folder channel recipe
+          PYTHON_VERSIONS="27 34 35 36 37"
+          for PYV in ${PYTHON_VERSIONS}; do
+            ${LINUX32} conda build --python "$PYV" --output-folder channel recipe
+            ccache --show-stats
+          done
       - task: CopyFiles@2
         inputs:
           sourceFolder: '$(Build.SourcesDirectory)/channel/'

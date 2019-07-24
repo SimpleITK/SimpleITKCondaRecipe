@@ -17,8 +17,7 @@ cd ${BUILD_DIR}
 
 PYTHON_INCLUDE_DIR=$(${PYTHON} -c 'import sysconfig;print("{0}".format(sysconfig.get_path("platinclude")))')
 PYTHON_LIBRARY_DIR=$(${PYTHON} -c 'import sysconfig;print("{0}/{1}".format(*map(sysconfig.get_config_var, ("LIBDIR", "LDLIBRARY"))))')
-
-
+export CCACHE_NODIRECT=1
 cmake \
     -G Ninja \
     ${CMAKE_ARGS} \
@@ -29,6 +28,8 @@ cmake \
     -D "CMAKE_MODULE_LINKER_FLAGS:STRING=${LDFLAGS}" \
     -D "CMAKE_SHARED_LINKER_FLAGS:STRING=${LDFLAGS}" \
     -D "CMAKE_STATIC_LINKER_FLAGS:STRING=${LDFLAGS}" \
+    -D "CMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache" \
+    -D "CMAKE_C_COMPILER_LAUNCHER:STRING=ccache" \
     -D SimpleITK_GIT_PROTOCOL:STRING=git \
     -D SimpleITK_BUILD_DISTRIBUTE:BOOL=ON \
     -D SimpleITK_BUILD_STRIP:BOOL=ON \
