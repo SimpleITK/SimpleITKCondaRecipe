@@ -47,7 +47,7 @@ jobs:
       - powershell: |
 
           Set-PSDebug -Trace 1
-
+          Remove-Item -Recurse -Force $Env:CONDA
           $download_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe"
           if ($env:VAR_ARCH -eq "x86")
             {
@@ -163,7 +163,7 @@ jobs:
           fi
         displayName: Checkout pull request HEAD
       - bash: |
-
+          rm -rf ${CONDA}
           if [ $VAR_ARCH == "x86" ]; then
              curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86.sh
              /bin/bash Miniconda3-latest-Linux-x86.sh -p /opt/miniconda3-x86 -b
@@ -244,7 +244,7 @@ jobs:
           fi
         displayName: Checkout pull request HEAD
       - bash: |
-
+          rm -rf ${CONDA}
           curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
           /bin/bash Miniconda3-latest-MacOSX-x86_64.sh -p ${AGENT_BUILDDIRECTORY}/miniconda3 -b
           echo "##vso[task.prependpath]${AGENT_BUILDDIRECTORY}/miniconda3/bin"
