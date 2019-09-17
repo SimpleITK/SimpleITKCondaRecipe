@@ -47,7 +47,9 @@ jobs:
       - powershell: |
 
           Set-PSDebug -Trace 1
-          Remove-Item -Recurse -Force $Env:CONDA
+
+           Remove-Item -Recurse -Force $Env:CONDA
+
           $download_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe"
           if ($env:VAR_ARCH -eq "x86")
             {
