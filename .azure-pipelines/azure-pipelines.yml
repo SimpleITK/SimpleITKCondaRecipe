@@ -89,7 +89,7 @@ jobs:
         displayName: Patch vs2008 (if needed)
       - bash: |
           source activate
-          conda update -n base -c defaults conda -y
+          # conda update -n base -c defaults conda -y
           conda create --yes --quiet --name bld
           conda activate bld
           conda install --yes --name bld conda-build=$VAR_CONDA_BUILD_VERSION
