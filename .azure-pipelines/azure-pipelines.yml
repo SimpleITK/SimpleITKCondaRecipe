@@ -250,12 +250,6 @@ jobs:
           echo "##vso[task.prependpath]${AGENT_BUILDDIRECTORY}/miniconda3/bin"
         displayName: "Installing Miniconda"
       - bash: |
-          source activate
-          which conda
-          conda update --yes --name base -c defaults conda
-          conda create --yes --quiet --name bld
-          conda activate bld
-          conda install --yes --name bld conda-build
 
 
           # see https://github.com/ContinuumIO/anaconda-issues/issues/9096
@@ -272,8 +266,11 @@ jobs:
           conda_build:
             config_file: ${AGENT_BUILDDIRECTORY}/conda_build_config.yml
           EOF
-          cat  ${AGENT_BUILDDIRECTORY}/conda_build_config.yml
-          cat  ~/.condarc
+          source activate
+          which conda
+          #conda update --yes --name base -c defaults conda
+          conda install --yes --name base conda-build
+
 
         displayName: "Creating updated environment with conda-build..."
       - bash: |
@@ -281,8 +278,8 @@ jobs:
           export PYTHONUNBUFFERED=1
 
           source activate
-          conda activate bld
 
+          which conda
           set -x
           conda build --python "$VAR_PYTHON_VERSION" --output-folder channel recipe
         displayName: "Building..."
