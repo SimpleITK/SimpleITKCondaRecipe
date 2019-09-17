@@ -8,6 +8,9 @@ package:
 source:
   git_url: git://itk.org/SimpleITK.git
   git_tag: "v{{version}}"
+  patches:
+    - 0001-Add-more-CMake-find-related-variables-including-fram.patch
+    - 0002-Add-more-Superbuild-variables-to-support-find-root.patch
 
 build:
     number: "{{build_number}}"
