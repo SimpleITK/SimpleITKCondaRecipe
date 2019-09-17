@@ -12,7 +12,7 @@ cd ${BUILD_DIR}
 
 
 PYTHON_INCLUDE_DIR=$(${PYTHON} -c 'import sysconfig;print("{0}".format(sysconfig.get_path("platinclude")))')
-PYTHON_LIBRARY_DIR=$(${PYTHON} -c 'import sysconfig;print("{0}/{1}".format(*map(sysconfig.get_config_var, ("LIBDIR", "LDLIBRARY"))))')
+PYTHON_LIBRARY=$(${PYTHON} -c 'import sysconfig;print("{0}/{1}".format(*map(sysconfig.get_config_var, ("LIBDIR", "LDLIBRARY"))))')
 
 
 cmake \
@@ -43,7 +43,7 @@ cmake \
     -D "CMAKE_SYSTEM_PREFIX_PATH:FILEPATH=${PREFIX}" \
     -D "PYTHON_EXECUTABLE:FILEPATH=${PYTHON}" \
     -D "PYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}" \
-    -D "PYTHON_LIBRARY_DIR:PATH=${PYTHON_LIBRARY_DIR}" \
+    -D "PYTHON_LIBRARY=${PYTHON_LIBRARY_DIR}" \
     -D "SWIG_EXECUTABLE:FILEPATH=${PREFIX}/bin/swig" \
     "${SRC_DIR}/SuperBuild"
 
