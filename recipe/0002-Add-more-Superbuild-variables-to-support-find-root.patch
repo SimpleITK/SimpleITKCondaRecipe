@@ -1,0 +1,29 @@
+From 0e5dda91a177c5e81cc5b23d08fef95a46aea8d1 Mon Sep 17 00:00:00 2001
+From: Bradley Lowekamp <blowekamp@mail.nih.gov>
+Date: Wed, 18 Sep 2019 16:30:19 -0400
+Subject: [PATCH] Add more Superbuild variables to support find root
+
+---
+ SuperBuild/SuperBuild.cmake | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/SuperBuild/SuperBuild.cmake b/SuperBuild/SuperBuild.cmake
+index d84b257f..4c16f930 100644
+--- a/SuperBuild/SuperBuild.cmake
++++ b/SuperBuild/SuperBuild.cmake
+@@ -230,6 +230,12 @@ list( APPEND ep_common_list
+   CMAKE_FRAMEWORK_PATH
+   CMAKE_SYSTEM_FRAMEWORK_PATH
+ 
++  CMAKE_FIND_ROOT_PATH
++  CMAKE_FIND_ROOT_PATH_MODE_INCLUDE
++  CMAKE_FIND_ROOT_PATH__MODE_LIBRARY
++  CMAKE_FIND_ROOT_PATH__MODE_PROGRAM
++  CMAKE_FIND_ROOT_PATH__MODE_PACKAGE:
++
+   CMAKE_DL_LIBS
+   CMAKE_THREAD_LIBS_INIT
+ 
+-- 
+2.15.2 (Apple Git-101.1)
+

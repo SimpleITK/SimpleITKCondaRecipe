@@ -1,0 +1,32 @@
+From 76722a8df18a9c6e4a793543a1d2a3b4214f392b Mon Sep 17 00:00:00 2001
+From: Bradley Lowekamp <blowekamp@mail.nih.gov>
+Date: Tue, 17 Sep 2019 14:40:23 -0400
+Subject: [PATCH] Add more CMake find related variables including framework
+ options
+
+---
+ SuperBuild/SuperBuild.cmake | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/SuperBuild/SuperBuild.cmake b/SuperBuild/SuperBuild.cmake
+index 8816fabb..d84b257f 100644
+--- a/SuperBuild/SuperBuild.cmake
++++ b/SuperBuild/SuperBuild.cmake
+@@ -221,7 +221,14 @@ list( APPEND ep_common_list
+   CMAKE_STRIP_FLAGS
+ 
+   CMAKE_PREFIX_PATH
++  CMAKE_INCLUDE_PATH
++  CMAKE_LIBRARY_PATH
++  CMAKE_PROGRAM_PATH
++  CMAKE_IGNORE_PATH
++
++  CMAKE_FIND_FRAMEWORK
+   CMAKE_FRAMEWORK_PATH
++  CMAKE_SYSTEM_FRAMEWORK_PATH
+ 
+   CMAKE_DL_LIBS
+   CMAKE_THREAD_LIBS_INIT
+-- 
+2.15.2 (Apple Git-101.1)
+
