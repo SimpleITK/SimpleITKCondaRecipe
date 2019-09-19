@@ -47,7 +47,6 @@ cmake \
     -D "PYTHON_EXECUTABLE:FILEPATH=${PYTHON}" \
     -D "PYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}" \
     -D "PYTHON_LIBRARY=${PYTHON_LIBRARY_DIR}" \
-    -D "SWIG_EXECUTABLE:FILEPATH=${PREFIX}/bin/swig" \
     "${SRC_DIR}/SuperBuild"
 
 cmake --build  . --config Release
