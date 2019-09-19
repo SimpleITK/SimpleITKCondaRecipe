@@ -23,11 +23,11 @@ requirements:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake    >=3.11
+    - swig     >=3,<4
     - ninja
 
   host:
     - python
-    - swig     >=3
     - setuptools
     - libtiff
     - libpng
