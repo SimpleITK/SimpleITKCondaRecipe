@@ -46,6 +46,7 @@ test:
 about:
   home: http::/www.simpleitk.org
   license: Apache 2.0
+  license_file: LICENSE
   summary: Simplified interface to the Insight Toolkit for image registration and segmentation
 
 extra:
