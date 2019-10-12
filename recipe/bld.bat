@@ -1,12 +1,13 @@
-set BUILD_DIR=C:\b\%PY_VER%-%ARCH%
-IF EXIST %BUILD_DIR% ( echo "Please remove %BUILD_DIR%"; exit 1 )
-mkdir %BUILD_DIR%
-cd %BUILD_DIR%
+
+
+mkdir b
+cd b
 
 REM Remove dot from PY_VER for use in library name
 set MY_PY_VER=%PY_VER:.=%
 
 set CXXFLAGS=/MP
+set CFLAGS=/MP
 
 REM Configure Step
 cmake -G "%CMAKE_GENERATOR%" ^
@@ -36,7 +37,7 @@ cmake -G "%CMAKE_GENERATOR%" ^
 if errorlevel 1 exit 1
 
 REM Build step
-cmake --build  . --config Release
+cmake --build  . --config MinSizeRel
 if errorlevel 1 exit 1
 
 REM Install step
@@ -45,5 +46,3 @@ if errorlevel 1 exit 1
 
 cd SimpleITK-build\Wrapping\Python
 %PYTHON% Packaging\setup.py install
-
-IF "%DIRTY%" NEQ "1" (rmdir /s /q %BUILD_DIR%)
