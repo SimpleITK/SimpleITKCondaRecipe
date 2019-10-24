@@ -162,8 +162,12 @@ jobs:
     timeoutInMinutes: 0
     cancelTimeoutInMinutes: 200
     strategy:
-      maxParallel: 3
+      maxParallel: 2
       matrix:
+        Python38:
+          imageName: 'Ubuntu-16.04'
+          var.python_version: 38
+          var.arch: x64
         Python37:
           imageName: 'Ubuntu-16.04'
           var.python_version: 37
@@ -180,6 +184,10 @@ jobs:
           imageName: 'Ubuntu-16.04'
           var.python_version: 27
           var.arch: x64
+        Python38-x86:
+          imageName: 'Ubuntu-16.04'
+          var.python_version: 38
+          var.arch: x86
         Python37-x86:
           imageName: 'Ubuntu-16.04'
           var.python_version: 37
@@ -258,6 +266,11 @@ jobs:
     strategy:
       maxParallel: 1
       matrix:
+        Python38:
+          imageName: 'macOS-10.13'
+          MACOSX_DEPLOYMENT_TARGET: '10.9'
+          var.python_version: 38
+          var.arch: x64
         Python37:
           imageName: 'macOS-10.13'
           MACOSX_DEPLOYMENT_TARGET: '10.9'
