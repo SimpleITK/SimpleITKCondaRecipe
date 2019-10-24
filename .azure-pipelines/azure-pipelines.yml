@@ -49,6 +49,8 @@ jobs:
           Start-Process -FilePath Miniconda_Install.exe -ArgumentList "/S /InstallationType=JustMe /AddToPath=0 /D=$install_dir" -Wait
           Remove-Item -Path Miniconda_Install.exe
 
+          Set-PSDebug -Trace 0
+
           Write-Host "##vso[task.prependpath]$install_dir\Scripts"
         displayName: "Installing Miniconda"
       - script: |
@@ -126,46 +128,24 @@ jobs:
           Write-Host "`nDownloading Miniconda Installer $download_url ...`n"
           (New-Object System.Net.WebClient).DownloadFile($download_url, "$pwd\Miniconda_Install.exe")
 
-          Write-Host "Installing Miniconda...`n"
-          $install_dir="C:\miniconda3"
-          Start-Process Miniconda_Install.exe "/S /AddToPath=0 /D=$install_dir" -Wait
+          $install_dir="$env:AGENT_BUILDDIRECTORY\m3"
+
+          Write-Host "Installing Miniconda to $install_dir...`n"
+
+          Start-Process -FilePath Miniconda_Install.exe -ArgumentList "/S /InstallationType=JustMe /AddToPath=0 /D=$install_dir" -Wait
+          Remove-Item -Path Miniconda_Install.exe
 
           Set-PSDebug -Trace 0
 
           Write-Host "##vso[task.prependpath]$install_dir\Scripts"
         displayName: "Installing Miniconda"
-      - bash: |
-          choco upgrade -y vcpython27
-        condition:  lt(variables['var.python_version'], '33')
-        displayName: "Installing Visual Studio for Python 2.7..."
-      - powershell: |
-          Set-PSDebug -Trace 1
-          $batchcontent = @"
-          ECHO ON
-          SET vcpython=C:\Program Files (x86)\Common Files\Microsoft\Visual C++ for Python\9.0
-          DIR "%vcpython%"
-          CALL "%vcpython%\vcvarsall.bat" %*
-          "@
-          $batchDir = "C:\Program Files (x86)\Common Files\Microsoft\Visual C++ for Python\9.0\VC"
-          $batchPath = "$batchDir" + "\vcvarsall.bat"
-          New-Item -Path $batchPath -ItemType "file" -Force
-          Set-Content -Value $batchcontent -Path $batchPath
-          Get-ChildItem -Path $batchDir
-          Get-ChildItem -Path ($batchDir + '\..')
-        condition:  lt(variables['var.python_version'], '33')
-        displayName: Patch vs2008 (if needed)
-      - bash: |
-          source activate
-          # conda update -n base -c defaults conda -y
-          conda create --yes --quiet --name bld
-          conda activate bld
-          conda install --yes --name bld conda-build=$VAR_CONDA_BUILD_VERSION
+      - script: |
+          call "$(Agent.BuildDirectory)\m3\Scripts\activate.bat"
+          conda install --yes conda-build=%VAR_CONDA_BUILD_VERSION%
         displayName: "Updating conda-build..."
-      - bash: |
-          source activate
-          conda activate bld
-          cd $(Build.SourcesDirectory)
-          conda build --croot "$AGENT_BUILDDIRECTORY" --no-build-id --python "$VAR_PYTHON_VERSION" --output-folder channel recipe
+      - script: |
+          call "$(Agent.BuildDirectory)\m3\Scripts\activate.bat"
+          conda build --croot "%AGENT_BUILDDIRECTORY%" --no-build-id --python "%VAR_PYTHON_VERSION%" --output-folder channel recipe
       - task: CopyFiles@2
         inputs:
           sourceFolder: '$(Build.SourcesDirectory)/channel/'
