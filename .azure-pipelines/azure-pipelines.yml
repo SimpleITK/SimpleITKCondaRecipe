@@ -2,73 +2,6 @@ variables:
   var.conda_version: 4.7.5
   var.conda_build_version: 3.18
 jobs:
-  - job: WindowsVS2008
-    timeoutInMinutes: 240
-    cancelTimeoutInMinutes: 20
-    strategy:
-      maxParallel: 2
-      matrix:
-        Python27-x86:
-          imageName: 'vs2017-win2016'
-          var.python_version: 27
-          var.arch: x86
-        Python27:
-          imageName: 'vs2017-win2016'
-          var.python_version: 27
-
-    pool:
-      name: 'Default'
-      demands:
-        - VS90COMNTOOLS
-    workspace:
-      clean: all
-    steps:
-      - checkout: self
-        clean: true
-        fetchDepth: 5
-      - script: |
-           if DEFINED SYSTEM_PULLREQUEST_SOURCECOMMITID git checkout $(System.PullRequest.SourceCommitId)
-        displayName: Checkout pull request HEAD
-      - powershell: |
-
-          Set-PSDebug -Trace 1
-
-          $download_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe"
-          if ($env:VAR_ARCH -eq "x86")
-            {
-            $download_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe"
-            }
-
-          Write-Host "`nDownloading Miniconda Installer $download_url ...`n"
-          (New-Object System.Net.WebClient).DownloadFile($download_url, "$pwd\Miniconda_Install.exe")
-
-          $install_dir="$env:AGENT_BUILDDIRECTORY\m3"
-
-          Write-Host "Installing Miniconda to $install_dir...`n"
-
-          Start-Process -FilePath Miniconda_Install.exe -ArgumentList "/S /InstallationType=JustMe /AddToPath=0 /D=$install_dir" -Wait
-          Remove-Item -Path Miniconda_Install.exe
-
-          Write-Host "##vso[task.prependpath]$install_dir\Scripts"
-        displayName: "Installing Miniconda"
-      - script: |
-          call "$(Agent.BuildDirectory)\m3\Scripts\activate.bat"
-          conda install --yes conda-build=%VAR_CONDA_BUILD_VERSION%
-        displayName: "Updating conda-build..."
-      - script: |
-          call "$(Agent.BuildDirectory)\m3\Scripts\activate.bat"
-          conda build --croot "%AGENT_BUILDDIRECTORY%" --no-build-id --python "%VAR_PYTHON_VERSION%" --output-folder channel recipe
-        workingDirectory: $(Build.SourcesDirectory)
-      - task: CopyFiles@2
-        inputs:
-          sourceFolder: '$(Build.SourcesDirectory)/channel/'
-          contents: '*/simpleitk*.tar.bz2'
-          targetFolder: $(Build.ArtifactStagingDirectory)
-          flattenFolders: false
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: $(Build.ArtifactStagingDirectory)
-          artifactName: AnacondaPackage
   - job: Windows
     timeoutInMinutes: 0
     cancelTimeoutInMinutes: 200
@@ -196,10 +129,6 @@ jobs:
           imageName: 'Ubuntu-16.04'
           var.python_version: 35
           var.arch: x64
-        Python27:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 27
-          var.arch: x64
         Python37-x86:
           imageName: 'Ubuntu-16.04'
           var.python_version: 37
@@ -212,11 +141,6 @@ jobs:
           imageName: 'Ubuntu-16.04'
           var.python_version: 35
           var.arch: x86
-        Python27-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 27
-          var.arch: x86
-
 
     pool:
       vmImage: $(imageName)
@@ -292,11 +216,6 @@ jobs:
           imageName: 'macOS-10.13'
           MACOSX_DEPLOYMENT_TARGET: '10.9'
           var.python_version: 35
-          var.arch: x64
-        Python27:
-          imageName: 'macOS-10.13'
-          MACOSX_DEPLOYMENT_TARGET: '10.9'
-          var.python_version: 27
           var.arch: x64
 
     pool:
