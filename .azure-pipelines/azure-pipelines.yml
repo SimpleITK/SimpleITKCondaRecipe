@@ -8,24 +8,15 @@ jobs:
     strategy:
       maxParallel: 2
       matrix:
-        Python37-x86:
+        Python38:
           imageName: 'vs2017-win2016'
-          var.python_version: 37
-          var.arch: x86
+          var.python_version: 38
         Python37:
           imageName: 'vs2017-win2016'
           var.python_version: 37
-        Python36-x86:
-          imageName: 'vs2017-win2016'
-          var.python_version: 36
-          var.arch: x86
         Python36:
           imageName: 'vs2017-win2016'
           var.python_version: 36
-        Python35-x86:
-          imageName: 'vs2017-win2016'
-          var.python_version: 35
-          var.arch: x86
         Python35:
           imageName: 'vs2017-win2016'
           var.python_version: 35
@@ -117,6 +108,10 @@ jobs:
     strategy:
       maxParallel: 3
       matrix:
+        Python38:
+          imageName: 'Ubuntu-16.04'
+          var.python_version: 38
+          var.arch: x64
         Python37:
           imageName: 'Ubuntu-16.04'
           var.python_version: 37
@@ -129,18 +124,6 @@ jobs:
           imageName: 'Ubuntu-16.04'
           var.python_version: 35
           var.arch: x64
-        Python37-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 37
-          var.arch: x86
-        Python36-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 36
-          var.arch: x86
-        Python35-x86:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 35
-          var.arch: x86
 
     pool:
       vmImage: $(imageName)
@@ -202,18 +185,23 @@ jobs:
     strategy:
       maxParallel: 1
       matrix:
+        Python38:
+          imageName: 'macOS-10.14'
+          MACOSX_DEPLOYMENT_TARGET: '10.9'
+          var.python_version: 38
+          var.arch: x64
         Python37:
-          imageName: 'macOS-10.13'
+          imageName: 'macOS-10.14'
           MACOSX_DEPLOYMENT_TARGET: '10.9'
           var.python_version: 37
           var.arch: x64
         Python36:
-          imageName: 'macOS-10.13'
+          imageName: 'macOS-10.14'
           MACOSX_DEPLOYMENT_TARGET: '10.9'
           var.python_version: 36
           var.arch: x64
         Python35:
-          imageName: 'macOS-10.13'
+          imageName: 'macOS-10.14'
           MACOSX_DEPLOYMENT_TARGET: '10.9'
           var.python_version: 35
           var.arch: x64
