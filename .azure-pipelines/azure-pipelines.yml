@@ -106,7 +106,7 @@ jobs:
     timeoutInMinutes: 0
     cancelTimeoutInMinutes: 200
     strategy:
-      maxParallel: 3
+      maxParallel: 2
       matrix:
         Python38:
           imageName: 'Ubuntu-16.04'
@@ -183,7 +183,7 @@ jobs:
     timeoutInMinutes: 0
     cancelTimeoutInMinutes: 100
     strategy:
-      maxParallel: 1
+      maxParallel: 2
       matrix:
         Python38:
           imageName: 'macOS-10.14'
