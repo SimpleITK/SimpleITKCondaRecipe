@@ -53,4 +53,4 @@ cmake \
 
 cmake --build . --config Release
 cd ${BUILD_DIR}/SimpleITK-build/Wrapping/Python
-${PYTHON} Packaging/setup.py install
+${PYTHON} setup.py install
