@@ -45,4 +45,4 @@ REM cmake --build  . --config Release --target INSTALL
 if errorlevel 1 exit 1
 
 cd SimpleITK-build\Wrapping\Python
-%PYTHON% Packaging\setup.py install
+%PYTHON% setup.py install
