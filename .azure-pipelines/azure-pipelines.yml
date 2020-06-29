@@ -34,62 +34,21 @@ jobs:
             git checkout $(System.PullRequest.SourceCommitId)
           fi
         displayName: Checkout pull request HEAD
-      - powershell: |
-      - powershell: |
-
-          Set-PSDebug -Trace 1
-
-           Remove-Item -Recurse -Force $Env:CONDA
-
-          $download_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe"
-          if ($env:VAR_ARCH -eq "x86")
-            {
-            $download_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe"
-            }
-
-          Write-Host "`nDownloading Miniconda Installer $download_url ...`n"
-          (New-Object System.Net.WebClient).DownloadFile($download_url, "$pwd\Miniconda_Install.exe")
-
-          Write-Host "Installing Miniconda...`n"
-          $install_dir="C:\miniconda3"
-          Start-Process Miniconda_Install.exe "/S /AddToPath=0 /D=$install_dir" -Wait
-
-          Set-PSDebug -Trace 0
-
-          Write-Host "##vso[task.prependpath]$install_dir\Scripts"
-        displayName: "Installing Miniconda"
-      - bash: |
-          choco upgrade -y vcpython27
-        condition:  lt(variables['var.python_version'], '33')
-        displayName: "Installing Visual Studio for Python 2.7..."
-      - powershell: |
-          Set-PSDebug -Trace 1
-          $batchcontent = @"
-          ECHO ON
-          SET vcpython=C:\Program Files (x86)\Common Files\Microsoft\Visual C++ for Python\9.0
-          DIR "%vcpython%"
-          CALL "%vcpython%\vcvarsall.bat" %*
-          "@
-          $batchDir = "C:\Program Files (x86)\Common Files\Microsoft\Visual C++ for Python\9.0\VC"
-          $batchPath = "$batchDir" + "\vcvarsall.bat"
-          New-Item -Path $batchPath -ItemType "file" -Force
-          Set-Content -Value $batchcontent -Path $batchPath
-          Get-ChildItem -Path $batchDir
-          Get-ChildItem -Path ($batchDir + '\..')
-        condition:  lt(variables['var.python_version'], '33')
-        displayName: Patch vs2008 (if needed)
-      - bash: |
-          source activate
-          # conda update -n base -c defaults conda -y
-          conda create --yes --quiet --name bld
-          conda activate bld
-          conda install --yes --name bld conda-build=$VAR_CONDA_BUILD_VERSION
+      - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+        displayName: Add conda to PATH
+      - script: |
+          # on Windows conda is a bat file that will exit it not "CALL"'d
+          # https://docs.conda.io/projects/conda/en/latest/user-guide/troubleshooting.html#using-conda-in-windows-batch-script-exits-early          
+          call activate
+          call conda update --yes conda
+          call conda create --yes --quiet --name bld --no-default-packages
+          call conda install --yes --name bld conda-build=$(var.conda_build_version)
         displayName: "Updating conda-build..."
-      - bash: |
-          source activate
-          conda activate bld
+      - script: |
+          call activate bld
           cd $(Build.SourcesDirectory)
-          conda build --croot "$AGENT_BUILDDIRECTORY" --no-build-id --python "$VAR_PYTHON_VERSION" --output-folder channel recipe
+          call conda build --croot "$(Agent.BuildDirectory)" --no-build-id --python "$(var.python_version)" --output-folder channel recipe
+        displayName: "Building..."
       - task: CopyFiles@2
         inputs:
           sourceFolder: '$(Build.SourcesDirectory)/channel/'
@@ -135,38 +94,24 @@ jobs:
             git checkout $(System.PullRequest.SourceCommitId)
           fi
         displayName: Checkout pull request HEAD
+      - bash: echo "##vso[task.prependpath]$CONDA/bin"
+        displayName: Add conda to PATH
       - bash: |
-          rm -rf ${CONDA}
-          if [ $VAR_ARCH == "x86" ]; then
-             curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86.sh
-             /bin/bash Miniconda3-latest-Linux-x86.sh -p /opt/miniconda3-x86 -b
-             echo "##vso[task.prependpath]/opt/miniconda3-x86/bin"
-          else
-             curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-             /bin/bash Miniconda3-latest-Linux-x86_64.sh -p /opt/miniconda3 -b
-             echo "##vso[task.prependpath]/opt/miniconda3/bin"
-          fi
-        displayName: "Installing Miniconda"
-      - bash: |
-          source activate
           which conda
-          if [ $VAR_ARCH != "x86" ]; then
-            conda update --yes --name base -c defaults conda
-          fi
-          conda create --yes --quiet --name bld
-          conda activate bld
-
+          source activate
+          conda update --yes conda
+          conda create --yes --quiet --name bld --no-default-packages
           conda install --yes --name bld conda-build
         displayName: "Creating updated environment with conda-build..."
       - bash: |
           set -x
-          source activate
-          conda activate bld
+          source activate bld
           if [ ${VAR_ARCH} == "x86" ]; then
             LINUX32=$(which linux32)
             echo "LINUX32: ${LINUX32}"
           fi
           ${LINUX32} conda build --python "$VAR_PYTHON_VERSION" --output-folder channel recipe
+        displayName: "Building conda package..."
       - task: CopyFiles@2
         inputs:
           sourceFolder: '$(Build.SourcesDirectory)/channel/'
@@ -216,12 +161,12 @@ jobs:
             git checkout $(System.PullRequest.SourceCommitId)
           fi
         displayName: Checkout pull request HEAD
-      - bash: |
-          rm -rf ${CONDA}
-          curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-          /bin/bash Miniconda3-latest-MacOSX-x86_64.sh -p ${AGENT_BUILDDIRECTORY}/miniconda3 -b
-          echo "##vso[task.prependpath]${AGENT_BUILDDIRECTORY}/miniconda3/bin"
-        displayName: "Installing Miniconda"
+      - bash: echo "##vso[task.prependpath]$CONDA/bin"
+        displayName: Add conda to PATH
+
+      - bash: sudo chown -R $USER $CONDA
+        displayName: Take ownership of conda installation
+
       - bash: |
 
 
@@ -239,23 +184,21 @@ jobs:
           conda_build:
             config_file: ${AGENT_BUILDDIRECTORY}/conda_build_config.yml
           EOF
-          source activate
-          which conda
-          #conda update --yes --name base -c defaults conda
-          conda install --yes --name base conda-build
 
+
+          source activate
+          conda update --yes conda
+          conda create --yes --quiet --name bld --no-default-packages
+          conda install --yes --name bld conda-build
 
         displayName: "Creating updated environment with conda-build..."
       - bash: |
 
           export PYTHONUNBUFFERED=1
-
-          source activate
-
-          which conda
           set -x
+          source activate bld
           conda build --python "$VAR_PYTHON_VERSION" --output-folder channel recipe
-        displayName: "Building..."
+        displayName: "Building conda package..."
       - task: CopyFiles@2
         inputs:
           sourceFolder: '$(Build.SourcesDirectory)/channel/'
