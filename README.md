@@ -15,6 +15,15 @@ Anaconda cloud's [SimpleITK channel](https://anaconda.org/simpleitk/simpleitk).
 conda install -c simpleitk simpleitk
 ```
 
+### Pre-releases
+
+Pre-releases are available under the `dev` label on Adnaconda Cloud.
+
+
+```
+conda install -c simpleitk/label/dev simpleitk
+```
+
 
 ## I really do need to build
 
@@ -37,7 +46,7 @@ Links to download VS2015 can be found [here](https://stackoverflow.com/questions
 
 ### Process
 
-To build SimpleITK you need to clone this repository and run the build recipe. This will create the package appropriate for your currently active Python version (possibly  2.7):
+To build SimpleITK you need to clone this repository and run the build recipe. This will create the package appropriate for your currently active Python version:
 
 ```
 git clone https://github.com/SimpleITK/SimpleITKCondaRecipe.git
@@ -45,11 +54,11 @@ cd SimpleITKCondaRecipe
 conda build recipe
 ```
 
-You can also build for a version of Python which is not the currently active one, for example Python 3.4:
+You can also build for a version of Python which is not the currently active one, for example Python 3.8:
 ```
 git clone https://github.com/SimpleITK/SimpleITKCondaRecipe.git
 cd SimpleITKCondaRecipe
-conda build --python 3.4 recipe
+conda build --python 3.8 recipe
 ```
 
 Both builds above will use the currently released SimpleITK version which is specified in the [meta.yaml](recipe/meta.yaml) file. If you want another version, such as SimpleITK's current master branch, you will need to make the following two edits to the yaml file.
