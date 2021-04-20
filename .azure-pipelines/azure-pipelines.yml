@@ -8,6 +8,9 @@ jobs:
     strategy:
       maxParallel: 2
       matrix:
+        Python39:
+          imageName: 'vs2017-win2016'
+          var.python_version: 39
         Python38:
           imageName: 'vs2017-win2016'
           var.python_version: 38
@@ -38,7 +41,7 @@ jobs:
         displayName: Add conda to PATH
       - script: |
           # on Windows conda is a bat file that will exit it not "CALL"'d
-          # https://docs.conda.io/projects/conda/en/latest/user-guide/troubleshooting.html#using-conda-in-windows-batch-script-exits-early          
+          # https://docs.conda.io/projects/conda/en/latest/user-guide/troubleshooting.html#using-conda-in-windows-batch-script-exits-early
           call activate
           call conda update --yes conda
           call conda create --yes --quiet --name bld --no-default-packages
@@ -67,6 +70,10 @@ jobs:
     strategy:
       maxParallel: 2
       matrix:
+        Python39:
+          imageName: 'Ubuntu-16.04'
+          var.python_version: 39
+          var.arch: x64
         Python38:
           imageName: 'Ubuntu-16.04'
           var.python_version: 38
@@ -130,6 +137,11 @@ jobs:
     strategy:
       maxParallel: 2
       matrix:
+        Python39:
+          imageName: 'macOS-10.14'
+          MACOSX_DEPLOYMENT_TARGET: '10.9'
+          var.python_version: 39
+          var.arch: x64
         Python38:
           imageName: 'macOS-10.14'
           MACOSX_DEPLOYMENT_TARGET: '10.9'
