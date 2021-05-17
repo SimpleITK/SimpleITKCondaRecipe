@@ -1,5 +1,5 @@
 {% set name = "simpleitk" %}
-{% set version = "2.0.2" %}
+{% set version = "2.1rc1" %}
 {% set build_number = 0 %}
 
 package:
@@ -19,7 +19,7 @@ requirements:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake    >=3.11
-#    - swig     >=4,<5
+    - swig     >=4,<5
     - ninja
 
   host:
