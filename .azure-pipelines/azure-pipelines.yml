@@ -20,9 +20,6 @@ jobs:
         Python36:
           imageName: 'vs2017-win2016'
           var.python_version: 36
-        Python35:
-          imageName: 'vs2017-win2016'
-          var.python_version: 35
 
     pool:
       vmImage: $(imageName)
@@ -85,10 +82,6 @@ jobs:
         Python36:
           imageName: 'Ubuntu-16.04'
           var.python_version: 36
-          var.arch: x64
-        Python35:
-          imageName: 'Ubuntu-16.04'
-          var.python_version: 35
           var.arch: x64
 
     pool:
@@ -156,11 +149,6 @@ jobs:
           imageName: 'macOS-10.14'
           MACOSX_DEPLOYMENT_TARGET: '10.9'
           var.python_version: 36
-          var.arch: x64
-        Python35:
-          imageName: 'macOS-10.14'
-          MACOSX_DEPLOYMENT_TARGET: '10.9'
-          var.python_version: 35
           var.arch: x64
 
     pool:
