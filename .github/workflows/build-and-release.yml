@@ -1,0 +1,191 @@
+name: Build and Release Conda
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - '.github/**'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - '.github/**'
+  workflow_dispatch:
+    inputs: 
+      anaconda-tag:
+        description: 'Tag for anaconda'
+        default: 'dev'
+      skip-build:
+        description: 'Skip build steps to directly upload'
+        default: 'false'
+
+env:
+  conda_version: 4.7.5
+  conda_build_version: 3.18
+jobs:
+  build-windows:
+    strategy:
+      matrix:
+        python_version: [3.6, 3.7, 3.8, 3.9]
+    if: ${{ github.event.inputs.skip-build != 'true' }}
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        python-version: ${{ matrix.python_version }}
+    - name: Add scripts path
+      run: echo "$env:CONDA\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    - name: Updating conda-build...
+      shell: cmd
+      run: |
+        # on Windows conda is a bat file that will exit it not "CALL"'d
+        # https://docs.conda.io/projects/conda/en/latest/user-guide/troubleshooting.html#using-conda-in-windows-batch-script-exits-early
+        call activate
+        call conda update --yes conda
+        call conda install --yes conda-build
+        call conda create --yes --quiet --name bld --no-default-packages
+        call conda install --yes --name bld conda-build=${{ env.conda_build_version }}
+    - name: Building...
+      shell: cmd
+      run: | 
+        call activate bld
+        call conda build --no-build-id --python "${{ matrix.python_version }}" --output-folder channel recipe
+    - name: Publishing artifact...
+      uses: actions/upload-artifact@v2
+      with:
+        path: "channel/*/simpleitk*.tar.bz2"
+
+  build-linux:
+    strategy:
+      matrix:
+        python_version: [3.6, 3.7, 3.8, 3.9]
+    if: ${{ github.event.inputs.skip-build != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout 
+
+      - name: Add conda to PATH
+        shell: bash
+        run: echo "$CONDA/bin" >> $GITHUB_PATH
+
+      - name: "Creating updated environment with conda-build..."
+        shell: bash
+        run: |
+          source activate
+          conda update --yes conda
+          conda create --yes --quiet --name bld --no-default-packages
+          conda install --yes --name bld conda-build
+          
+      - name: "Building conda package..."
+        shell: bash
+        run: |          
+          set -x
+          source activate bld
+          conda build --python ${{ matrix.python_version }} --output-folder channel recipe
+      - uses: actions/upload-artifact@v2
+        with:
+          path: "${{github.workspace}}/channel/*/simpleitk*.tar.bz2"
+
+  build-mac:
+    strategy:
+      matrix:
+        python_version: [3.6, 3.7, 3.8, 3.9]
+    if: ${{ github.event.inputs.skip-build != 'true' }}
+    env:
+      MACOSX_DEPLOYMENT_TARGET: '10.15'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout 
+      - name: Take ownership of conda installation
+        run: sudo chown -R $USER $CONDA
+        shell: bash 
+      - name: Add conda to PATH
+        shell: bash
+        run: echo "$CONDA/bin" >> $GITHUB_PATH
+      - name: "Creating updated environment with conda-build..."
+        shell: bash
+        run: |
+          set -x
+          sudo xcode-select --switch /Applications/Xcode_11.7.0.app
+          xcode-select -p
+          echo "Downloading ${MACOSX_DEPLOYMENT_TARGET} sdk"
+          curl -L -O https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk.tar.xz
+          tar -xf MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk.tar.xz -C "$(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs"
+          cat << EOF >> ${GITHUB_WORKSPACE}/conda_build_config.yml
+          CONDA_BUILD_SYSROOT:
+             - $(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk
+          MACOSX_DEPLOYMENT_TARGET:
+             - ${MACOSX_DEPLOYMENT_TARGET}
+          EOF
+          cat << EOF > ~/.condarc
+          conda_build:
+            config_file: ${GITHUB_WORKSPACE}/conda_build_config.yml
+          EOF
+          
+          source activate
+          conda update --yes conda
+          conda create --yes --quiet --name bld --no-default-packages
+          conda install --yes --name bld conda-build
+      - name: "Building conda package..."
+        shell: bash
+        run: |
+          export PYTHONUNBUFFERED=1
+          set -x
+          source activate bld
+          conda build --python ${{ matrix.python_version }}  --output-folder channel recipe
+      - uses: actions/upload-artifact@v2
+        with:
+          path: "${{github.workspace}}/channel/*/simpleitk*.tar.bz2"
+  
+  publish:
+    environment: 
+      name: release
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.skip-build == 'false' }}
+    needs: [build-windows, build-linux, build-mac]
+
+    steps:
+    - uses: actions/download-artifact@v2
+    - name: Verify files
+      run: ls -LR
+    - name: Sign into anaconda and upload
+      run: |
+        pip3 uninstall urllib3 && pip3 install --upgrade urllib3
+        pip3 install --upgrade requests
+        pip3 install anaconda-client
+        anaconda login --username '${{ secrets.conda_user }}' --password '${{ secrets.conda_password }}' --hostname $(cat /proc/sys/kernel/random/uuid)
+        anaconda upload --force ./artifact/*/*.tar.bz2 --label ${{ github.event.inputs.anaconda-tag }} 
+    - name: Always logout
+      if: always()
+      run: anaconda logout
+
+  publish-no-build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.skip-build == 'true' }}
+
+    steps:
+    - uses: dawidd6/action-download-artifact@v2
+      with: 
+        workflow_conclusion: success
+        workflow: windows.yml
+    - name: Verify files
+      run: ls -LR
+    - name: Sign into anaconda and upload
+      run: |
+        pip3 uninstall urllib3 && pip3 install --upgrade urllib3
+        pip3 install --upgrade requests
+        pip3 install anaconda-client
+        anaconda login --username '${{ secrets.conda_user }}' --password '${{ secrets.conda_password }}' --hostname $(cat /proc/sys/kernel/random/uuid)
+        anaconda upload --force ./artifact/*/*.tar.bz2 --label ${{ github.event.inputs.anaconda-tag }} 
+    - name: Always logout
+      if: always()
+      run: anaconda logout
+    - name: Republishing artifact...
+      uses: actions/upload-artifact@v2
+      with:
+        path: "artifact/*/simpleitk*.tar.bz2"
