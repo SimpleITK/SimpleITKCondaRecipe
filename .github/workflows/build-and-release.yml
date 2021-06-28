@@ -27,7 +27,7 @@ jobs:
       matrix:
         python_version: [3.6, 3.7, 3.8, 3.9]
     if: ${{ github.event.inputs.skip-build != 'true' }}
-    runs-on: windows-latest
+    runs-on: windows-2016
 
     steps:
     - uses: actions/checkout@v2
