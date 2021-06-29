@@ -6,6 +6,12 @@ if [ $ARCH == 32 -a "${OSX_ARCH:-notosx}" == "notosx" ]; then
     export CXXFLAGS="${CXXFLAGS} -m32"
 fi
 
+if [ ! -z ${CONDA_BUILD_SYSROOT:+x} ]; then
+    echo $CMAKE_ARGS
+    export CMAKE_ARGS="${CMAKE_ARGS} -DCMAKE_OSX_SYSROOT=${CONDA_BUILD_SYSROOT}"
+fi
+
+
 BUILD_DIR=${SRC_DIR}/build
 mkdir -p ${BUILD_DIR}
 cd ${BUILD_DIR}
