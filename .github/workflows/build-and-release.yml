@@ -92,7 +92,7 @@ jobs:
     if: ${{ github.event.inputs.skip-build != 'true' }}
     env:
       MACOSX_DEPLOYMENT_TARGET: '10.15'
-    runs-on: macos-latest
+    runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
         name: Checkout 
