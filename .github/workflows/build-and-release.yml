@@ -3,12 +3,7 @@ name: Build and Release Conda
 on:
   push:
     branches: [ master ]
-    paths-ignore:
-      - '.github/**'
   pull_request:
-    branches: [ master ]
-    paths-ignore:
-      - '.github/**'
   workflow_dispatch:
     inputs: 
       anaconda-tag:
