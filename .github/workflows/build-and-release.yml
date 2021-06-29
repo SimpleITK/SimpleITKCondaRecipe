@@ -91,7 +91,8 @@ jobs:
         python_version: [3.6, 3.7, 3.8, 3.9]
     if: ${{ github.event.inputs.skip-build != 'true' }}
     env:
-      MACOSX_DEPLOYMENT_TARGET: '10.15'
+      MACOSX_SDK: '10.10'
+      MACOSX_DEPLOYMENT_TARGET: '10.9'
     runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
@@ -108,18 +109,18 @@ jobs:
           set -x
           sudo xcode-select --switch /Applications/Xcode_11.7.0.app
           xcode-select -p
-          echo "Downloading ${MACOSX_DEPLOYMENT_TARGET} sdk"
-          curl -L -O https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk.tar.xz
-          tar -xf MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk.tar.xz -C "$(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs"
-          cat << EOF >> ${GITHUB_WORKSPACE}/conda_build_config.yml
+
+          # https://docs.conda.io/projects/conda-build/en/latest/resources/compiler-tools.html?highlight=CONDA_BUILD_SYSROOT#macos-sdk
+          echo "Downloading ${MACOSX_SDK} sdk"
+          curl -L -O https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX${MACOSX_SDK}.sdk.tar.xz
+          tar -xf MacOSX${MACOSX_SDK}.sdk.tar.xz -C "$(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs"
+
+          # path autoloaded: https://docs.conda.io/projects/conda-build/en/latest/resources/variants.html#creating-conda-build-variant-config-files
+          cat << EOF >> ~/conda_build_config.yml
           CONDA_BUILD_SYSROOT:
-             - $(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk
+             - $(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${MACOSX_SDK}.sdk
           MACOSX_DEPLOYMENT_TARGET:
              - ${MACOSX_DEPLOYMENT_TARGET}
-          EOF
-          cat << EOF > ~/.condarc
-          conda_build:
-            config_file: ${GITHUB_WORKSPACE}/conda_build_config.yml
           EOF
           
           source activate
