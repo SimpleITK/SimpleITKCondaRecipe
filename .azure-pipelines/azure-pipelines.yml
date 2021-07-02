@@ -68,19 +68,19 @@ jobs:
       maxParallel: 2
       matrix:
         Python39:
-          imageName: 'Ubuntu-16.04'
+          imageName: 'Ubuntu-20.04'
           var.python_version: 39
           var.arch: x64
         Python38:
-          imageName: 'Ubuntu-16.04'
+          imageName: 'Ubuntu-20.04'
           var.python_version: 38
           var.arch: x64
         Python37:
-          imageName: 'Ubuntu-16.04'
+          imageName: 'Ubuntu-20.04'
           var.python_version: 37
           var.arch: x64
         Python36:
-          imageName: 'Ubuntu-16.04'
+          imageName: 'Ubuntu-20.04'
           var.python_version: 36
           var.arch: x64
 
