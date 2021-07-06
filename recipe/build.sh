@@ -58,6 +58,6 @@ cmake \
     -D GDCM_USE_COREFOUNDATION_LIBRARY:BOOL=OFF \
     "${SRC_DIR}/SuperBuild"
 
-cmake --build . --config Release
+cmake --build . --config Release --target SimpleITK-build
 cd ${BUILD_DIR}/SimpleITK-build/Wrapping/Python
 ${PYTHON} setup.py install
