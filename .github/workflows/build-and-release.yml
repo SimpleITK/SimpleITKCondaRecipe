@@ -154,11 +154,14 @@ jobs:
         pip3 uninstall urllib3 && pip3 install --upgrade urllib3
         pip3 install --upgrade requests
         pip3 install anaconda-client
-        anaconda login --username '${{ secrets.conda_user }}' --password '${{ secrets.conda_password }}' --hostname $(cat /proc/sys/kernel/random/uuid)
-        anaconda upload --force ./artifact/*/*.tar.bz2 --label ${{ github.event.inputs.anaconda-tag }} 
-    - name: Always logout
-      if: always()
-      run: anaconda logout
+
+
+        anaconda upload --no-progress --user $(ANCACONDA_ORGANIZATION) --label ${ANACONDA_LABEL} ./artifact/*/*.tar.bz2
+
+      env:
+          ANCACONDA_ORGANIZATION: simpleitk
+          ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+          ANACONDA_LABEL: dev
 
   publish-no-build:
     runs-on: ubuntu-latest
