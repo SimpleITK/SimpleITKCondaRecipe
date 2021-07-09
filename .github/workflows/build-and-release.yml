@@ -4,24 +4,36 @@ on:
   push:
     branches: [ master ]
   pull_request:
+  release:
+    types: 
+      - created
   workflow_dispatch:
-    inputs: 
-      anaconda-tag:
-        description: 'Tag for anaconda'
-        default: 'dev'
-      skip-build:
-        description: 'Skip build steps to directly upload'
-        default: 'false'
 
 env:
   conda_version: 4.7.5
   conda_build_version: 3.18
 jobs:
+  set-anaconda-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      anaconda-tag: ${{ steps.anaconda-tag.outputs.tag }}
+    steps:
+    - name: set var
+      run:
+        if [[ $GITHUB_REF == 'refs/heads/master' ]]; then
+          echo "anaconda-tag=dev" >> $GITHUB_ENV;
+        elif [[ $GITHUB_REF =~ refs/tags/* ]]; then 
+          echo "anaconda-tag=main" >> $GITHUB_ENV;
+        fi
+    - name: set Anaconda tag - ${{ env.anaconda-tag }}
+      id: anaconda-tag
+      run: |
+        echo ${{ env.anaconda-tag }}
+        echo "::set-output name=tag::${{ env.anaconda-tag }}"
   build-windows:
     strategy:
       matrix:
         python_version: [3.6, 3.7, 3.8, 3.9]
-    if: ${{ github.event.inputs.skip-build != 'true' }}
     runs-on: windows-2016
 
     steps:
@@ -57,7 +69,6 @@ jobs:
     strategy:
       matrix:
         python_version: [3.6, 3.7, 3.8, 3.9]
-    if: ${{ github.event.inputs.skip-build != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -89,7 +100,6 @@ jobs:
     strategy:
       matrix:
         python_version: [3.6, 3.7, 3.8, 3.9]
-    if: ${{ github.event.inputs.skip-build != 'true' }}
     env:
       MACOSX_SDK: '10.10'
       MACOSX_DEPLOYMENT_TARGET: '10.9'
@@ -142,8 +152,8 @@ jobs:
     environment: 
       name: release
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.skip-build == 'false' }}
-    needs: [build-windows, build-linux, build-mac]
+    if: ${{ github.event_name != 'pull_request' }}
+    needs: [build-windows, build-linux, build-mac, set-anaconda-tag]
 
     steps:
     - uses: actions/download-artifact@v2
@@ -155,36 +165,8 @@ jobs:
         pip3 install --upgrade requests
         pip3 install anaconda-client
 
-
-        anaconda upload --no-progress --user $(ANCACONDA_ORGANIZATION) --label ${ANACONDA_LABEL} ./artifact/*/*.tar.bz2
-
+        anaconda upload --force --no-progress --user ${ANACONDA_ORGANIZATION} --label ${ANACONDA_LABEL} ./artifact/*/*.tar.bz2
       env:
-          ANCACONDA_ORGANIZATION: simpleitk
+          ANACONDA_ORGANIZATION: simpleitk
           ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
-          ANACONDA_LABEL: dev
-
-  publish-no-build:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.skip-build == 'true' }}
-
-    steps:
-    - uses: dawidd6/action-download-artifact@v2
-      with: 
-        workflow_conclusion: success
-        workflow: windows.yml
-    - name: Verify files
-      run: ls -LR
-    - name: Sign into anaconda and upload
-      run: |
-        pip3 uninstall urllib3 && pip3 install --upgrade urllib3
-        pip3 install --upgrade requests
-        pip3 install anaconda-client
-        anaconda login --username '${{ secrets.conda_user }}' --password '${{ secrets.conda_password }}' --hostname $(cat /proc/sys/kernel/random/uuid)
-        anaconda upload --force ./artifact/*/*.tar.bz2 --label ${{ github.event.inputs.anaconda-tag }} 
-    - name: Always logout
-      if: always()
-      run: anaconda logout
-    - name: Republishing artifact...
-      uses: actions/upload-artifact@v2
-      with:
-        path: "artifact/*/simpleitk*.tar.bz2"
+          ANACONDA_LABEL: ${{needs.set-anaconda-tag.outputs.anaconda-tag}}
