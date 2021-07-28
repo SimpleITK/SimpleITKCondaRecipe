@@ -4,9 +4,9 @@ on:
   push:
     branches: [ master ]
   pull_request:
-  release:
-    types: 
-      - created
+  create:
+    tags:
+      - v*
   workflow_dispatch:
 
 env:
@@ -167,6 +167,6 @@ jobs:
 
         anaconda upload --force --no-progress --user ${ANACONDA_ORGANIZATION} --label ${ANACONDA_LABEL} ./artifact/*/*.tar.bz2
       env:
-          ANACONDA_ORGANIZATION: simpleitk
-          ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
-          ANACONDA_LABEL: ${{needs.set-anaconda-tag.outputs.anaconda-tag}}
+        ANACONDA_ORGANIZATION: simpleitk
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        ANACONDA_LABEL: ${{needs.set-anaconda-tag.outputs.anaconda-tag}}
