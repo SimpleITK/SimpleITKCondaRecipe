@@ -29,6 +29,7 @@ requirements:
     - libpng
     - jpeg
     - zlib
+    - tbb-devel
 
   run:
     - vs2015_runtime  # [win]
@@ -37,7 +38,7 @@ requirements:
     - {{ pin_compatible('libpng', max_pin='x.x') }}
     - {{ pin_compatible('jpeg', max_pin='x') }}
     - {{ pin_compatible('zlib', max_pin='x.x') }}
-
+    - tbb
 
 test:
   imports:
