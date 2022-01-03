@@ -1,5 +1,5 @@
 {% set name = "simpleitk" %}
-{% set version = "2.1.1" %}
+{% set version = "2.2rc1" %}
 {% set build_number = 0 %}
 
 package:
@@ -11,6 +11,9 @@ source:
   git_url: https://github.com/SimpleITK/SimpleITK
   git_tag: v{{version}}
 
+  patches:
+    - 0001-Manually-set-NIFTI_SYSTEM_MATH_LIB.patch
+
 build:
     number: "{{build_number}}"
 
@@ -18,7 +21,7 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - cmake    >=3.11
+    - cmake    >=3.16.3
     - swig     >=4,<5
     - ninja
 

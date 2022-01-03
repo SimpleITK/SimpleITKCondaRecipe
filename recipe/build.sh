@@ -57,6 +57,7 @@ cmake \
     -D ITK_CXX_OPTIMIZATION_FLAGS:STRING= \
     -D Module_ITKTBB:BOOL=ON \
     -D GDCM_USE_COREFOUNDATION_LIBRARY:BOOL=OFF \
+    -D NIFTI_SYSTEM_MATH_LIB= \
     "${SRC_DIR}/SuperBuild"
 
 cmake --build . --config Release --target SimpleITK-build
