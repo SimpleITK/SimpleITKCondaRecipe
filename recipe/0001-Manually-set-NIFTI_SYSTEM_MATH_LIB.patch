@@ -1,0 +1,24 @@
+From dc3dc3147fb928bb46a4509a5a02fb4a49b9a7c2 Mon Sep 17 00:00:00 2001
+From: Bradley Lowekamp <blowekamp@mail.nih.gov>
+Date: Mon, 3 Jan 2022 19:50:31 +0000
+Subject: [PATCH] Manually set NIFTI_SYSTEM_MATH_LIB
+
+---
+ SuperBuild/External_ITK.cmake | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/SuperBuild/External_ITK.cmake b/SuperBuild/External_ITK.cmake
+index 3b4982b0..57ce71d3 100644
+--- a/SuperBuild/External_ITK.cmake
++++ b/SuperBuild/External_ITK.cmake
+@@ -39,6 +39,7 @@ foreach (_varName ${_varNames})
+       OR _varName MATCHES "^ITKV4"
+       OR _varName MATCHES "FFTW"
+       OR _varName MATCHES "^GDCM_"
++      OR _varName MATCHES "^NIFTI_"
+       OR _varName MATCHES "^Module_"
+       OR _varName STREQUAL "TBB_DIR")
+     message( STATUS "Passing variable \"${_varName}=${${_varName}}\" to ITK external project.")
+-- 
+2.25.1
+
