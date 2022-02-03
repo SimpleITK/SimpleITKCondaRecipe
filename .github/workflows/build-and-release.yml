@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 env:
-  conda_version: 4.7.5
-  conda_build_version: 3.18
+  conda_version: 4.10.3
+  conda_build_version: 3.21.7
 jobs:
   set-anaconda-tag:
     runs-on: ubuntu-latest
@@ -33,7 +33,7 @@ jobs:
   build-windows:
     strategy:
       matrix:
-        python_version: [3.6, 3.7, 3.8, 3.9]
+        python_version:  ['3.7', '3.8', '3.9', '3.10']
     runs-on: windows-2016
 
     steps:
@@ -68,7 +68,7 @@ jobs:
   build-linux:
     strategy:
       matrix:
-        python_version: [3.6, 3.7, 3.8, 3.9]
+        python_version: ['3.7', '3.8', '3.9', '3.10']
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -99,7 +99,7 @@ jobs:
   build-mac:
     strategy:
       matrix:
-        python_version: [3.6, 3.7, 3.8, 3.9]
+        python_version: ['3.7', '3.8', '3.9', '3.10']
     env:
       MACOSX_SDK: '10.10'
       MACOSX_DEPLOYMENT_TARGET: '10.9'
