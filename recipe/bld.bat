@@ -10,7 +10,7 @@ set CXXFLAGS=/MP
 set CFLAGS=/MP
 
 REM Configure Step
-cmake -T "host=x64" -G "%CMAKE_GENERATOR%" ^
+cmake -T "v141,host=x64" -G "Visual Studio 16 2019" ^
     -D SimpleITK_BUILD_DISTRIBUTE:BOOL=ON ^
     -D BUILD_SHARED_LIBS:BOOL=OFF ^
     -D BUILD_TESTING:BOOL=OFF ^
