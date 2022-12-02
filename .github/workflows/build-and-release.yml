@@ -18,18 +18,14 @@ jobs:
     outputs:
       anaconda-tag: ${{ steps.anaconda-tag.outputs.tag }}
     steps:
-    - name: set var
+    - name: Set Tag for Anaconda
+      id: anaconda-tag
       run:
         if [[ $GITHUB_REF == 'refs/heads/master' ]]; then
-          echo "anaconda-tag=dev" >> $GITHUB_ENV;
+          echo "tag=dev" >> $GITOUTPUT_ENV;
         elif [[ $GITHUB_REF =~ refs/tags/* ]]; then 
-          echo "anaconda-tag=main" >> $GITHUB_ENV;
+          echo "tag=main" >> $GITOUTPUT_ENV;
         fi
-    - name: set Anaconda tag - ${{ env.anaconda-tag }}
-      id: anaconda-tag
-      run: |
-        echo ${{ env.anaconda-tag }}
-        echo "::set-output name=tag::${{ env.anaconda-tag }}"
   build-windows:
     strategy:
       matrix:
@@ -37,7 +33,7 @@ jobs:
     runs-on: windows-2019
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Add Conda
       uses: conda-incubator/setup-miniconda@v2
       with:
@@ -61,7 +57,7 @@ jobs:
         call activate bld
         call conda build --no-build-id --python "${{ matrix.python_version }}" --output-folder channel recipe
     - name: Publishing artifact...
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: "channel/*/simpleitk*.tar.bz2"
 
@@ -71,7 +67,7 @@ jobs:
         python_version: ['3.7', '3.8', '3.9', '3.10']
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         name: Checkout 
 
       - name: Add conda to PATH
@@ -92,7 +88,7 @@ jobs:
           set -x
           source activate bld
           conda build --python ${{ matrix.python_version }} --output-folder channel recipe
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: "${{github.workspace}}/channel/*/simpleitk*.tar.bz2"
 
@@ -105,7 +101,7 @@ jobs:
       MACOSX_DEPLOYMENT_TARGET: '10.9'
     runs-on: macos-10.15
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         name: Checkout 
       - name: Take ownership of conda installation
         run: sudo chown -R $USER $CONDA
@@ -144,7 +140,7 @@ jobs:
           set -x
           source activate bld
           conda build --python ${{ matrix.python_version }}  --output-folder channel recipe
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: "${{github.workspace}}/channel/*/simpleitk*.tar.bz2"
   
@@ -156,7 +152,7 @@ jobs:
     needs: [build-windows, build-linux, build-mac, set-anaconda-tag]
 
     steps:
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
     - name: Verify files
       run: ls -LR
     - name: Sign into anaconda and upload
