@@ -155,12 +155,20 @@ jobs:
     - uses: actions/download-artifact@v3
     - name: Verify files
       run: ls -LR
+
+    - name: Add conda to PATH
+      shell: bash
+      run: echo "$CONDA/bin" >> $GITHUB_PATH
+
+    - name: "Creating updated environment with conda-build..."
+      shell: bash
+      run: |
+        source activate
+        conda update --yes conda
+        conda install --yes anaconda-client
+
     - name: Sign into anaconda and upload
       run: |
-        pip3 uninstall urllib3 && pip3 install --upgrade urllib3
-        pip3 install --upgrade requests
-        pip3 install anaconda-client
-
         anaconda upload --force --no-progress --user ${ANACONDA_ORGANIZATION} --label ${ANACONDA_LABEL} ./artifact/*/*.tar.bz2
       env:
         ANACONDA_ORGANIZATION: simpleitk
