@@ -10,7 +10,7 @@ set CXXFLAGS=/MP
 set CFLAGS=/MP
 
 REM Configure Step
-cmake -T "v141,host=x64" -G "Visual Studio 16 2019" ^
+cmake -T "v142,host=x64" -G "Visual Studio 16 2019" ^
     -D SimpleITK_BUILD_DISTRIBUTE:BOOL=ON ^
     -D BUILD_SHARED_LIBS:BOOL=OFF ^
     -D BUILD_TESTING:BOOL=OFF ^
@@ -23,7 +23,7 @@ cmake -T "v141,host=x64" -G "Visual Studio 16 2019" ^
     -D ITK_USE_SYSTEM_PNG:BOOL=ON ^
     -D ITK_USE_SYSTEM_TIFF:BOOL=ON ^
     -D ITK_USE_SYSTEM_ZLIB:BOOL=ON ^
-    -D Module_ITKTBB:BOOL=ON ^
+    -D Module_ITKTBB:BOOL=OFF ^
     -D "CMAKE_FIND_ROOT_PATH:PATH=%PREFIX%" ^
     -D "CMAKE_FIND_ROOT_PATH_MODE_INCLUDE:STRING=ONLY" ^
     -D "CMAKE_FIND_ROOT_PATH_MODE_LIBRARY:STRING=ONLY" ^
