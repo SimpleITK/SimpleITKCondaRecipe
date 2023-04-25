@@ -25,20 +25,20 @@ requirements:
   host:
     - python
     - setuptools
-    - libtiff
-    - libpng
-    - jpeg
+    - libtiff    # [not win]
+    - libpng     # [not win]
+    - jpeg       # [not win]
     - zlib
-    - tbb-devel
+    - tbb-devel  # [not win]
 
   run:
     - vs2015_runtime  # [win]
     - python
-    - {{ pin_compatible('libtiff', max_pin='x.x') }}
-    - {{ pin_compatible('libpng', max_pin='x.x') }}
-    - {{ pin_compatible('jpeg', max_pin='x') }}
+    - {{ pin_compatible('libtiff', max_pin='x.x') }} # [not win]
+    - {{ pin_compatible('libpng', max_pin='x.x') }}  # [not win]
+    - {{ pin_compatible('jpeg', max_pin='x') }}      # [not win]
     - {{ pin_compatible('zlib', max_pin='x.x') }}
-    - tbb
+    - tbb # [not win]
 
 test:
   imports:
