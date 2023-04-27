@@ -1,6 +1,6 @@
 {% set name = "simpleitk" %}
 {% set version = "2.2.1" %}
-{% set build_number = 0 %}
+{% set build_number = 1 %}
 
 package:
   name: simpleitk
@@ -25,20 +25,20 @@ requirements:
   host:
     - python
     - setuptools
-    - libtiff
-    - libpng
-    - jpeg
-    - zlib
-    - tbb-devel
+    - libtiff    # [not win]
+    - libpng     # [not win]
+    - jpeg       # [not win]
+    - zlib       # [not win]
+    - tbb-devel  # [not win]
 
   run:
     - vs2015_runtime  # [win]
     - python
-    - {{ pin_compatible('libtiff', max_pin='x.x') }}
-    - {{ pin_compatible('libpng', max_pin='x.x') }}
-    - {{ pin_compatible('jpeg', max_pin='x') }}
-    - {{ pin_compatible('zlib', max_pin='x.x') }}
-    - tbb
+    - {{ pin_compatible('libtiff', max_pin='x.x') }} # [not win]
+    - {{ pin_compatible('libpng', max_pin='x.x') }}  # [not win]
+    - {{ pin_compatible('jpeg', max_pin='x') }}      # [not win]
+    - {{ pin_compatible('zlib', max_pin='x.x') }}    # [not win]
+    - tbb # [not win]
 
 test:
   imports:
