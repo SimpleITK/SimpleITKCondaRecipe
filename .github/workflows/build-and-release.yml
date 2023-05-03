@@ -11,7 +11,7 @@ on:
 
 env:
   conda_version: 4.12.0
-  conda_build_version: 3.21.8
+  conda_build_version: 3.24.0
 jobs:
   set-anaconda-tag:
     runs-on: ubuntu-latest
@@ -29,7 +29,8 @@ jobs:
   build-windows:
     strategy:
       matrix:
-        python_version:  ['3.7', '3.8', '3.9', '3.10']
+        python_version:  ['3.9', '3.10']
+
     runs-on: windows-2019
 
     steps:
@@ -39,138 +40,49 @@ jobs:
       with:
         auto-update-conda: true
         python-version: ${{ matrix.python_version }}
+        conda-build-version: ${{ env.conda_build_version }}
+
+    - name: Inspect Conda Environment
+      run: |
+       which python
+       conda list
+       conda info --all
     - name: Add scripts path
       run: echo "$env:CONDA\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    - name: Updating conda-build...
-      shell: cmd
-      run: |
-        # on Windows conda is a bat file that will exit it not "CALL"'d
-        # https://docs.conda.io/projects/conda/en/latest/user-guide/troubleshooting.html#using-conda-in-windows-batch-script-exits-early
-        call activate
-        call conda update --yes conda
-        call conda install --yes conda-build
-        call conda create --yes --quiet --name bld --no-default-packages
-        call conda install --yes --name bld conda-build=${{ env.conda_build_version }}
     - name: Building...
       shell: cmd
       run: | 
-        call activate bld
         call conda build --no-build-id --python "${{ matrix.python_version }}" --output-folder channel recipe
     - name: Publishing artifact...
       uses: actions/upload-artifact@v3
       with:
         path: "channel/*/simpleitk*.tar.bz2"
 
-  build-linux:
+  artifact-test:
+    runs-on: windows-2019
+    needs: build-windows
     strategy:
       matrix:
-        python_version: ['3.7', '3.8', '3.9', '3.10']
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        name: Checkout 
-
-      - name: Add conda to PATH
-        shell: bash
-        run: echo "$CONDA/bin" >> $GITHUB_PATH
-
-      - name: "Creating updated environment with conda-build..."
-        shell: bash
-        run: |
-          source activate
-          conda update --yes conda
-          conda create --yes --quiet --name bld --no-default-packages
-          conda install --yes --name bld conda-build
-          
-      - name: "Building conda package..."
-        shell: bash
-        run: |          
-          set -x
-          source activate bld
-          conda build --python ${{ matrix.python_version }} --output-folder channel recipe
-      - uses: actions/upload-artifact@v3
-        with:
-          path: "${{github.workspace}}/channel/*/simpleitk*.tar.bz2"
-
-  build-mac:
-    strategy:
-      matrix:
-        python_version: ['3.7', '3.8', '3.9', '3.10']
-    env:
-      MACOSX_SDK: '10.10'
-      MACOSX_DEPLOYMENT_TARGET: '10.9'
-    runs-on: macos-11
-    steps:
-      - uses: actions/checkout@v3
-        name: Checkout 
-      - name: Take ownership of conda installation
-        run: sudo chown -R $USER $CONDA
-        shell: bash 
-      - name: Add conda to PATH
-        shell: bash
-        run: echo "$CONDA/bin" >> $GITHUB_PATH
-      - name: "Creating updated environment with conda-build..."
-        shell: bash
-        run: |
-          set -x
-          sudo xcode-select --switch /Applications/Xcode_11.7.0.app
-          xcode-select -p
-
-          # https://docs.conda.io/projects/conda-build/en/latest/resources/compiler-tools.html?highlight=CONDA_BUILD_SYSROOT#macos-sdk
-          echo "Downloading ${MACOSX_SDK} sdk"
-          curl -L -O https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX${MACOSX_SDK}.sdk.tar.xz
-          tar -xf MacOSX${MACOSX_SDK}.sdk.tar.xz -C "$(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs"
-
-          # path autoloaded: https://docs.conda.io/projects/conda-build/en/latest/resources/variants.html#creating-conda-build-variant-config-files
-          cat << EOF >> ~/conda_build_config.yml
-          CONDA_BUILD_SYSROOT:
-             - $(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${MACOSX_SDK}.sdk
-          MACOSX_DEPLOYMENT_TARGET:
-             - ${MACOSX_DEPLOYMENT_TARGET}
-          EOF
-          
-          source activate
-          conda update --yes conda
-          conda create --yes --quiet --name bld --no-default-packages
-          conda install --yes --name bld conda-build
-      - name: "Building conda package..."
-        shell: bash
-        run: |
-          export PYTHONUNBUFFERED=1
-          set -x
-          source activate bld
-          conda build --python ${{ matrix.python_version }}  --output-folder channel recipe
-      - uses: actions/upload-artifact@v3
-        with:
-          path: "${{github.workspace}}/channel/*/simpleitk*.tar.bz2"
-  
-  publish:
-    environment: 
-      name: release
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' }}
-    needs: [build-windows, build-linux, build-mac, set-anaconda-tag]
+        python_version:  ['3.9', '3.10']
 
     steps:
     - uses: actions/download-artifact@v3
     - name: Verify files
       run: ls -LR
+    - name: Add Conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        python-version: ${{ matrix.python_version }}
+        conda-build-version: ${{ env.conda_build_version }}
 
-    - name: Add conda to PATH
-      shell: bash
-      run: echo "$CONDA/bin" >> $GITHUB_PATH
-
-    - name: "Creating updated environment with conda-build..."
-      shell: bash
+    - name: Inspect Conda Environment
       run: |
-        source activate
-        conda update --yes conda
-        conda install --yes anaconda-client
-
-    - name: Sign into anaconda and upload
+       which python
+       conda list
+       conda info --all
+    - name: Test Install
       run: |
-        anaconda upload --force --no-progress --user ${ANACONDA_ORGANIZATION} --label ${ANACONDA_LABEL} ./artifact/*/*.tar.bz2
-      env:
-        ANACONDA_ORGANIZATION: simpleitk
-        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
-        ANACONDA_LABEL: ${{needs.set-anaconda-tag.outputs.anaconda-tag}}
+        conda list
+        conda info --all
+        conda install --channel . simpleitk
