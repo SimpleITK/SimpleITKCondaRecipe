@@ -29,7 +29,7 @@ jobs:
   build-windows:
     strategy:
       matrix:
-        python_version:  ['3.9', '3.10']
+        python_version: ['3.8', '3.9', '3.10', '3.11']
 
     runs-on: windows-2019
 
@@ -63,12 +63,14 @@ jobs:
     needs: build-windows
     strategy:
       matrix:
-        python_version:  ['3.9', '3.10']
+        python_version: ['3.8', '3.9', '3.10', '3.11']
 
     steps:
     - uses: actions/download-artifact@v3
     - name: Verify files
-      run: ls -LR
+      run: |
+        ls -LR artifact
+      shell: bash
     - name: Add Conda
       uses: conda-incubator/setup-miniconda@v2
       with:
@@ -76,13 +78,13 @@ jobs:
         python-version: ${{ matrix.python_version }}
         conda-build-version: ${{ env.conda_build_version }}
 
-    - name: Inspect Conda Environment
+    - name: Install Artifact
       run: |
-       which python
-       conda list
-       conda info --all
-    - name: Test Install
-      run: |
+        which python
         conda list
         conda info --all
-        conda install --channel . simpleitk
+        conda index artifact
+        conda install --channel ./artifact simpleitk
+    - name: Test
+      run: |
+        python -c "import SimpleITK; print(SimpleITK.__version__)"
