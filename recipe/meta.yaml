@@ -32,7 +32,6 @@ requirements:
     - tbb-devel
 
   run:
-    - vs2015_runtime  # [win]
     - python
     - {{ pin_compatible('libtiff', max_pin='x.x') }}
     - {{ pin_compatible('libpng', max_pin='x.x') }}
