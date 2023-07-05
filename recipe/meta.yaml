@@ -1,5 +1,5 @@
 {% set name = "simpleitk" %}
-{% set version = "2.2.1" %}
+{% set version = "2.3rc1" %}
 {% set build_number = 0 %}
 
 package:
