@@ -152,7 +152,7 @@ jobs:
     needs: [build-windows, build-linux, build-mac, set-anaconda-tag]
 
     steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4.1.7
     - name: Verify files
       run: ls -LR
 
